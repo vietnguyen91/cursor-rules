@@ -1,0 +1,412 @@
+# {{PROJECT_NAME}} Scraping Architecture Blueprint
+# Generated: {{GENERATED_DATE}}
+# Version: {{VERSION}}
+# Target Website: {{TARGET_WEBSITE}}
+
+metadata:
+  name: "{{PROJECT_NAME}}_Scraping"
+  version: "{{VERSION}}"
+  description: "Comprehensive scraping architecture for {{TARGET_WEBSITE}}"
+  owner: "{{OWNER}}"
+  architect: "{{ARCHITECT}}"
+  created: "{{CREATED_DATE}}"
+  updated: "{{UPDATED_DATE}}"
+  status: "{{STATUS}}"  # draft|review|approved|deprecated
+  target_analysis_ref: "{{TARGET_ANALYSIS_FILE}}"
+
+# Target Website Information
+target_website:
+  name: "{{TARGET_NAME}}"
+  url: "{{TARGET_URL}}"
+  type: "{{WEBSITE_TYPE}}"  # news|ecommerce|social|entertainment|blog
+  complexity: "{{COMPLEXITY}}"  # simple|moderate|complex|enterprise
+  estimated_pages: {{ESTIMATED_PAGES}}
+  content_freshness: "{{CONTENT_FRESHNESS}}"  # static|daily|hourly|realtime
+
+# Scraping Strategy
+scraping_strategy:
+  primary_approach: "{{PRIMARY_APPROACH}}"  # api_first|scraping_primary|hybrid
+  fallback_approach: "{{FALLBACK_APPROACH}}"
+  
+  api_integration:
+    available: {{API_AVAILABLE}}  # true|false
+    endpoints:
+      - path: "{{API_ENDPOINT_1}}"
+        method: "{{HTTP_METHOD_1}}"
+        rate_limit: "{{RATE_LIMIT_1}}"
+        authentication: "{{AUTH_TYPE_1}}"
+      - path: "{{API_ENDPOINT_2}}"
+        method: "{{HTTP_METHOD_2}}"
+        rate_limit: "{{RATE_LIMIT_2}}"
+        authentication: "{{AUTH_TYPE_2}}"
+    
+  scraping_config:
+    method: "{{SCRAPING_METHOD}}"  # browser_automation|http_requests|hybrid
+    tools: 
+      - "{{TOOL_1}}"  # playwright|puppeteer|scrapy|requests
+      - "{{TOOL_2}}"
+    browser_requirements:
+      headless: {{HEADLESS_MODE}}
+      javascript: {{JAVASCRIPT_REQUIRED}}
+      cookies: {{COOKIES_REQUIRED}}
+      
+# Architecture Components
+architecture:
+  type: "scraping_system"
+  pattern: "{{ARCHITECTURE_PATTERN}}"  # microservices|monolith|modular
+  
+  components:
+    orchestrator:
+      name: "scraping_orchestrator"
+      technology: "{{ORCHESTRATOR_TECH}}"  # nodejs|python|golang
+      responsibilities:
+        - "Schedule scraping jobs"
+        - "Monitor scraper health"
+        - "Distribute workload"
+        - "Handle failures and retries"
+      scaling: "{{ORCHESTRATOR_SCALING}}"  # single|cluster|distributed
+      
+    scrapers:
+      count: {{SCRAPER_COUNT}}
+      technology: "{{SCRAPER_TECH}}"
+      concurrent_limit: {{CONCURRENT_LIMIT}}
+      instances:
+        - name: "content_scraper"
+          target: "{{CONTENT_TARGET}}"
+          selectors: "{{CONTENT_SELECTORS}}"
+        - name: "media_scraper"
+          target: "{{MEDIA_TARGET}}"
+          selectors: "{{MEDIA_SELECTORS}}"
+          
+    data_pipeline:
+      processing_type: "{{PROCESSING_TYPE}}"  # realtime|batch|hybrid
+      validation_level: "{{VALIDATION_LEVEL}}"  # strict|moderate|flexible
+      
+      stages:
+        - name: "extraction"
+          description: "Raw data extraction from target"
+          technology: "{{EXTRACTION_TECH}}"
+        - name: "validation"
+          description: "Data quality validation"
+          rules: "{{VALIDATION_RULES}}"
+        - name: "transformation"
+          description: "Data format transformation"
+          format: "{{OUTPUT_FORMAT}}"
+        - name: "enrichment" 
+          description: "Data enrichment and augmentation"
+          sources: "{{ENRICHMENT_SOURCES}}"
+        - name: "storage"
+          description: "Persistent data storage"
+          destination: "{{STORAGE_DESTINATION}}"
+
+# Data Models & Schema
+data_models:
+  entities:
+    - name: "{{ENTITY_1}}"
+      description: "{{ENTITY_1_DESCRIPTION}}"
+      source_selectors:
+        title: "{{TITLE_SELECTOR}}"
+        content: "{{CONTENT_SELECTOR}}"
+        metadata: "{{METADATA_SELECTOR}}"
+      fields:
+        - name: "{{FIELD_1}}"
+          type: "{{FIELD_TYPE_1}}"
+          required: {{FIELD_REQUIRED_1}}
+          source: "{{FIELD_SOURCE_1}}"
+          validation: "{{FIELD_VALIDATION_1}}"
+        - name: "{{FIELD_2}}"
+          type: "{{FIELD_TYPE_2}}"
+          required: {{FIELD_REQUIRED_2}}
+          source: "{{FIELD_SOURCE_2}}"
+          validation: "{{FIELD_VALIDATION_2}}"
+          
+    - name: "{{ENTITY_2}}"
+      description: "{{ENTITY_2_DESCRIPTION}}"
+      source_selectors:
+        identifier: "{{ID_SELECTOR}}"
+        content: "{{CONTENT_SELECTOR_2}}"
+      fields:
+        - name: "{{FIELD_1}}"
+          type: "{{FIELD_TYPE_1}}"
+          required: {{FIELD_REQUIRED_1}}
+          
+  relationships:
+    - from: "{{FROM_ENTITY}}"
+      to: "{{TO_ENTITY}}"
+      type: "{{RELATIONSHIP_TYPE}}"  # one_to_one|one_to_many|many_to_many
+      foreign_key: "{{FK_FIELD}}"
+
+# Database Architecture
+database:
+  primary:
+    type: "{{DB_TYPE}}"  # mongodb|postgresql|mysql
+    connection: "{{DB_CONNECTION}}"
+    performance_config:
+      indexes:
+        - fields: ["{{INDEX_FIELD_1}}"]
+          type: "{{INDEX_TYPE_1}}"
+        - fields: ["{{INDEX_FIELD_2}}", "{{INDEX_FIELD_3}}"]
+          type: "{{INDEX_TYPE_2}}"
+      partitioning:
+        enabled: {{PARTITIONING_ENABLED}}
+        strategy: "{{PARTITIONING_STRATEGY}}"
+        
+  caching:
+    layers:
+      - name: "redis_cache"
+        type: "redis"
+        ttl: {{CACHE_TTL}}
+        max_size: "{{CACHE_SIZE}}"
+        use_cases: ["{{CACHE_USE_CASE_1}}", "{{CACHE_USE_CASE_2}}"]
+        
+  backup:
+    strategy: "{{BACKUP_STRATEGY}}"
+    frequency: "{{BACKUP_FREQUENCY}}"
+    retention: "{{BACKUP_RETENTION}}"
+
+# Performance & Scalability
+performance:
+  requirements:
+    pages_per_hour: {{PAGES_PER_HOUR}}
+    data_freshness: "{{DATA_FRESHNESS}}"  # <1hour|<4hours|<24hours
+    system_availability: "{{AVAILABILITY}}"  # 99.9%|99.99%
+    
+  optimization:
+    request_throttling:
+      enabled: {{THROTTLING_ENABLED}}
+      requests_per_second: {{REQUESTS_PER_SECOND}}
+      burst_limit: {{BURST_LIMIT}}
+      
+    caching_strategy:
+      page_cache: {{PAGE_CACHE_ENABLED}}
+      result_cache: {{RESULT_CACHE_ENABLED}}
+      cdn_integration: {{CDN_ENABLED}}
+      
+    resource_management:
+      memory_limit: "{{MEMORY_LIMIT}}"
+      cpu_limit: "{{CPU_LIMIT}}"
+      disk_space: "{{DISK_SPACE}}"
+
+# Error Handling & Resilience
+resilience:
+  retry_mechanisms:
+    exponential_backoff: {{EXPONENTIAL_BACKOFF}}
+    max_retries: {{MAX_RETRIES}}
+    timeout_escalation: [{{TIMEOUT_1}}, {{TIMEOUT_2}}, {{TIMEOUT_3}}]
+    
+  fallback_strategies:
+    cache_fallback: {{CACHE_FALLBACK}}
+    alternative_sources: ["{{ALT_SOURCE_1}}", "{{ALT_SOURCE_2}}"]
+    graceful_degradation: {{GRACEFUL_DEGRADATION}}
+    
+  monitoring:
+    health_checks:
+      - endpoint: "{{HEALTH_ENDPOINT_1}}"
+        frequency: "{{HEALTH_FREQUENCY_1}}"
+        expected_response: {{EXPECTED_RESPONSE_1}}
+    
+    alert_thresholds:
+      failure_rate: {{FAILURE_THRESHOLD}}  # 0.1 = 10%
+      response_time: {{RESPONSE_TIME_THRESHOLD}}  # milliseconds
+      memory_usage: {{MEMORY_THRESHOLD}}  # percentage
+      
+    logging:
+      level: "{{LOG_LEVEL}}"  # debug|info|warn|error
+      destinations: ["{{LOG_DEST_1}}", "{{LOG_DEST_2}}"]
+      retention: "{{LOG_RETENTION}}"
+
+# Security & Compliance
+security:
+  anti_bot_countermeasures:
+    user_agent_rotation: {{UA_ROTATION}}
+    proxy_rotation: {{PROXY_ROTATION}}
+    request_randomization: {{REQUEST_RANDOMIZATION}}
+    captcha_handling: {{CAPTCHA_HANDLING}}
+    
+  rate_limiting:
+    respect_robots_txt: {{RESPECT_ROBOTS}}
+    custom_rate_limits: {{CUSTOM_RATE_LIMITS}}
+    rate_limit_config:
+      - domain: "{{DOMAIN_1}}"
+        requests_per_minute: {{RPM_1}}
+        concurrent_requests: {{CONCURRENT_1}}
+        
+  data_protection:
+    encrypt_at_rest: {{ENCRYPT_REST}}
+    encrypt_in_transit: {{ENCRYPT_TRANSIT}}
+    pii_handling: "{{PII_HANDLING}}"  # anonymize|exclude|secure
+    
+  compliance:
+    gdpr_compliant: {{GDPR_COMPLIANT}}
+    ccpa_compliant: {{CCPA_COMPLIANT}}
+    robots_txt_compliance: {{ROBOTS_COMPLIANCE}}
+    terms_of_service_review: "{{TOS_REVIEW_STATUS}}"
+
+# Deployment & Infrastructure  
+deployment:
+  hosting:
+    type: "{{HOSTING_TYPE}}"  # cloud|vps|on_premise
+    provider: "{{HOSTING_PROVIDER}}"
+    regions: ["{{REGION_1}}", "{{REGION_2}}"]
+    
+  environment_variables:
+    - name: "{{ENV_VAR_1}}"
+      description: "{{ENV_DESC_1}}"
+      required: {{ENV_REQUIRED_1}}
+      default: "{{ENV_DEFAULT_1}}"
+    - name: "{{ENV_VAR_2}}"
+      description: "{{ENV_DESC_2}}"
+      required: {{ENV_REQUIRED_2}}
+      
+  scaling:
+    auto_scaling: {{AUTO_SCALING}}
+    min_instances: {{MIN_INSTANCES}}
+    max_instances: {{MAX_INSTANCES}}
+    scaling_triggers:
+      - metric: "{{SCALING_METRIC_1}}"
+        threshold: {{SCALING_THRESHOLD_1}}
+        action: "{{SCALING_ACTION_1}}"
+
+# Testing Strategy
+testing:
+  unit_tests:
+    framework: "{{TEST_FRAMEWORK}}"
+    coverage_target: {{COVERAGE_TARGET}}
+    critical_paths: ["{{TEST_PATH_1}}", "{{TEST_PATH_2}}"]
+    
+  integration_tests:
+    scraping_validation:
+      - test_name: "{{TEST_NAME_1}}"
+        target_url: "{{TEST_URL_1}}"
+        expected_fields: ["{{FIELD_1}}", "{{FIELD_2}}"]
+        data_quality_checks: ["{{CHECK_1}}", "{{CHECK_2}}"]
+        
+    performance_tests:
+      - test_name: "load_test"
+        concurrent_scrapers: {{LOAD_TEST_SCRAPERS}}
+        duration: "{{LOAD_TEST_DURATION}}"
+        success_criteria: "{{LOAD_TEST_CRITERIA}}"
+        
+  monitoring_tests:
+    uptime_monitoring: {{UPTIME_MONITORING}}
+    data_quality_monitoring: {{QUALITY_MONITORING}}
+    performance_monitoring: {{PERFORMANCE_MONITORING}}
+
+# Quality Gates
+quality_gates:
+  gate_1_analysis:
+    - "Target website analysis completed"
+    - "Legal compliance verified"
+    - "Technical feasibility confirmed"
+    - "Data models defined"
+    
+  gate_2_architecture:
+    - "Scraping strategy approved"
+    - "Architecture components designed"
+    - "Performance requirements defined"
+    - "Security measures planned"
+    
+  gate_3_implementation:
+    - "Core scraping functionality implemented"
+    - "Data pipeline operational"
+    - "Error handling implemented"
+    - "Basic monitoring setup"
+    
+  gate_4_production:
+    - "Full test suite passing"
+    - "Performance benchmarks met"
+    - "Security review completed"
+    - "Production monitoring active"
+
+# Risk Assessment
+risks:
+  technical_risks:
+    - risk: "{{TECH_RISK_1}}"
+      probability: "{{RISK_PROB_1}}"  # low|medium|high
+      impact: "{{RISK_IMPACT_1}}"     # low|medium|high
+      mitigation: "{{RISK_MITIGATION_1}}"
+      owner: "{{RISK_OWNER_1}}"
+      
+  operational_risks:
+    - risk: "{{OP_RISK_1}}"
+      probability: "{{RISK_PROB_1}}"
+      impact: "{{RISK_IMPACT_1}}"
+      mitigation: "{{RISK_MITIGATION_1}}"
+      owner: "{{RISK_OWNER_1}}" 
+      
+  compliance_risks:
+    - risk: "{{COMPLIANCE_RISK_1}}"
+      probability: "{{RISK_PROB_1}}"
+      impact: "{{RISK_IMPACT_1}}"
+      mitigation: "{{RISK_MITIGATION_1}}"
+      owner: "{{RISK_OWNER_1}}"
+
+# Implementation Plan
+implementation:
+  phases:
+    phase_1:
+      name: "Infrastructure Setup"
+      duration: "{{PHASE_1_DURATION}}"
+      deliverables:
+        - "{{PHASE_1_DELIVERABLE_1}}"
+        - "{{PHASE_1_DELIVERABLE_2}}"
+      dependencies: ["{{PHASE_1_DEPENDENCY_1}}"]
+      
+    phase_2:
+      name: "Core Scraping Implementation"
+      duration: "{{PHASE_2_DURATION}}"
+      deliverables:
+        - "{{PHASE_2_DELIVERABLE_1}}"
+        - "{{PHASE_2_DELIVERABLE_2}}"
+      dependencies: ["phase_1"]
+      
+    phase_3:
+      name: "Data Pipeline & Processing"
+      duration: "{{PHASE_3_DURATION}}"
+      deliverables:
+        - "{{PHASE_3_DELIVERABLE_1}}"
+        - "{{PHASE_3_DELIVERABLE_2}}"
+      dependencies: ["phase_2"]
+      
+    phase_4:
+      name: "Testing & Optimization"
+      duration: "{{PHASE_4_DURATION}}"
+      deliverables:
+        - "{{PHASE_4_DELIVERABLE_1}}"
+        - "{{PHASE_4_DELIVERABLE_2}}"
+      dependencies: ["phase_3"]
+
+# Approval & Sign-off
+approval:
+  gate_status: 0  # 0=draft, 1=approved, 2=implemented
+  stakeholders:
+    - role: "{{STAKEHOLDER_ROLE_1}}"
+      name: "{{STAKEHOLDER_NAME_1}}"
+      approval_status: "{{APPROVAL_STATUS_1}}"  # pending|approved|rejected
+      comments: "{{STAKEHOLDER_COMMENTS_1}}"
+      
+  technical_review:
+    reviewer: "{{TECH_REVIEWER}}"
+    review_date: "{{REVIEW_DATE}}"
+    approval_date: "{{APPROVAL_DATE}}"
+    implementation_ready: {{IMPLEMENTATION_READY}}
+    
+  legal_review:
+    reviewer: "{{LEGAL_REVIEWER}}"
+    review_date: "{{LEGAL_REVIEW_DATE}}"
+    compliance_status: "{{COMPLIANCE_STATUS}}"
+    restrictions: "{{LEGAL_RESTRICTIONS}}"
+
+# Documentation Links
+documentation:
+  target_analysis: "{{TARGET_ANALYSIS_LINK}}"
+  api_documentation: "{{API_DOCS_LINK}}"
+  deployment_guide: "{{DEPLOYMENT_GUIDE_LINK}}"
+  monitoring_guide: "{{MONITORING_GUIDE_LINK}}"
+  
+# Version History
+version_history:
+  - version: "{{VERSION_1}}"
+    date: "{{VERSION_DATE_1}}"
+    changes: "{{VERSION_CHANGES_1}}"
+    author: "{{VERSION_AUTHOR_1}}" 
