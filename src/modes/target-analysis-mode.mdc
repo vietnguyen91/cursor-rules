@@ -6,6 +6,21 @@ alwaysApply: false
 # 🎯 Target Analysis Mode
 Deep analysis of target websites for comprehensive cloning strategy with enhanced MCP capabilities.
 
+```yaml
+# Rule Metadata
+rule_type: MODE_TARGET_ANALYSIS
+priority: 2
+scope: ["website-clone", "target-analysis"]
+requires: []
+conflicts: []
+activation_conditions:
+  - mode: "Target_Analysis"
+  - manual_request: ["clone website", "analyze target"]
+  - empty_targets_directory: true
+description: "Comprehensive website analysis including technical stack and legal compliance"
+version: "2.0.0"
+```
+
 ## 🎯 Activation
 - User requests to clone a new website
 - Missing `docs/targets/{website}.analysis.md` 

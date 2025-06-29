@@ -6,6 +6,20 @@ alwaysApply: false
 # 🔒 Safe Code Generation (v4 - RMWV + Surgical Edits)
 Strictly adhere to the **Read-Modify-Write-Verify (RMWV)** cycle when editing code to ensure absolute safety and prevent file corruption.
 
+```yaml
+# Rule Metadata
+rule_type: UTILITY_SAFE_CODE
+priority: 3
+scope: ["code-generation", "file-modification", "safety"]
+requires: []
+conflicts: []
+activation_conditions:
+  - mode: "Developing"
+  - code_modification_required: true
+description: "Mandatory Read-Modify-Write-Verify cycle for safe code generation"
+version: "4.0.0"
+```
+
 ## 🔄 The RMWV Cycle
 1.  **READ**: Read and understand 100% of the file's context with `read_file` before editing.
 2.  **MODIFY**: Apply the "Surgical Edit" principles to prepare the changes.

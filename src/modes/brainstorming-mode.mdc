@@ -6,6 +6,21 @@ alwaysApply: false
 # 💡 Brainstorming Mode
 Initialize and analyze new feature ideas before transitioning to Planning, leveraging advanced MCP tools for comprehensive ideation.
 
+```yaml
+# Rule Metadata
+rule_type: MODE_BRAINSTORMING
+priority: 2
+scope: ["creative-ideation", "feature-planning"]
+requires: []
+conflicts: ["UTILITY_SAFE_CODE", "MODE_DEVELOPING"]
+activation_conditions:
+  - mode: "Brainstorming"
+  - manual_request: "brainstorm"
+  - missing_blueprint: true
+description: "Creative ideation mode with enhanced MCP tools for comprehensive brainstorming"
+version: "2.0.0"
+```
+
 ## 🎯 Activation
 - Automatically by `master-orchestrator` when detecting feature requests without Blueprint/Tasks
 - Manually: user types "start brainstorming" or "@brainstorm"

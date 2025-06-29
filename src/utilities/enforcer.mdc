@@ -6,6 +6,20 @@ alwaysApply: false
 # 🛡️ Enforcement Utility (v1)
 Provides runtime safeguards that prevent the agent from performing workflow steps when project gates are unmet.
 
+```yaml
+# Rule Metadata
+rule_type: UTILITY_ENFORCER
+priority: 3
+scope: ["rule-enforcement", "quality-gates", "safety"]
+requires: []
+conflicts: []
+activation_conditions:
+  - mode: ["Developing", "Integration_Testing", "Content_Sync"]
+  - safety_enforcement_required: true
+description: "Safety gates and rule violation prevention system"
+version: "1.0.0"
+```
+
 ## Scope
 This rule is **trigger-loaded** by core components (orchestrator / context-loader) whenever the agent attempts to:
 1. Generate or modify production source code.

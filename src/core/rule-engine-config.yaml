@@ -1,0 +1,218 @@
+# 🔧 Rule Engine Configuration
+# Central configuration for rule type system and workflow management
+
+rule_engine:
+  # Core engine settings
+  version: "2.0.0"
+  strict_mode: true              # Enforce all validations
+  auto_resolve_conflicts: true   # Automatic conflict resolution
+  load_suggested_rules: false    # Manual suggestion approval
+  cache_rule_metadata: true     # Performance optimization
+  
+  # Rule discovery settings
+  rule_discovery:
+    scan_paths: 
+      - "src/"
+      - ".cursor-rules/"
+    file_patterns: 
+      - "*.mdc"
+      - "*.md" 
+      - ".cursor-rules"
+    metadata_required: true
+    auto_scan_interval: 300      # 5 minutes
+    
+  # Conflict resolution strategy  
+  conflict_resolution:
+    strategy: "priority_based"   # priority_based | manual | automatic
+    log_resolutions: true
+    notify_overrides: true
+    escalation_threshold: 3      # Max automatic attempts
+    
+  # Performance optimization
+  performance:
+    lazy_loading: true           # Load rules on-demand
+    cache_duration: 3600         # 1 hour rule cache
+    parallel_loading: true       # Load compatible rules in parallel
+    max_concurrent_loads: 5      # Limit parallel operations
+    memory_cleanup_interval: 1800 # 30 minutes
+
+# Rule loading sequence and priorities
+loading_sequence:
+  priority_order:
+    - 1  # ORCHESTRATION_RULES (highest)
+    - 2  # MODE_RULES 
+    - 3  # UTILITY_RULES
+    - 4  # PROJECT_RULES
+    - 5  # TEMPLATE_RULES
+    - 6  # KNOWLEDGE_RULES (lowest)
+    
+  mandatory_rules:
+    - "master-orchestrator.mdc"
+    - "context-loader.mdc"
+    
+  conditional_loading:
+    developing_mode:
+      required: ["safe-code-generation.mdc", "enforcer.mdc"]
+      optional: []
+      excluded: []
+
+# Rule activation matrix based on project state and mode
+activation_matrix:
+  project_types:
+    website_clone:
+      supported_modes: 
+        - "Target_Analysis"
+        - "Architecture_Planning" 
+        - "Developing"
+        - "Integration_Testing"
+        - "Content_Sync"
+      required_utilities: ["safe_code", "enforcer"]
+      
+    multi_source:
+      supported_modes:
+        - "Multi_Source_Analysis"
+        - "Architecture_Planning"
+        - "Developing" 
+        - "Content_Sync"
+      required_utilities: ["enforcer", "quality"]
+      
+    general_development:
+      supported_modes:
+        - "Brainstorming"
+        - "Planning"
+        - "Developing"
+        - "Documenting"
+      required_utilities: ["safe_code", "enforcer"]
+
+  mode_rules:
+    Brainstorming:
+      required_types: ["MODE_BRAINSTORMING"]
+      optional_types: ["KNOWLEDGE_RULES", "TEMPLATE_RULES"]
+      excluded_types: ["UTILITY_SAFE_CODE"]
+      
+    Target_Analysis:
+      required_types: ["MODE_TARGET_ANALYSIS"]
+      optional_types: ["TEMPLATE_ANALYSIS", "KNOWLEDGE_RULES"]
+      excluded_types: []
+      
+    Multi_Source_Analysis:
+      required_types: ["MODE_MULTI_SOURCE"]
+      optional_types: ["UTILITY_ENFORCER", "TEMPLATE_ANALYSIS"]
+      excluded_types: []
+      
+    Developing:
+      required_types: ["MODE_DEVELOPING", "UTILITY_SAFE_CODE", "UTILITY_ENFORCER"]
+      optional_types: ["TEMPLATE_TASK"]
+      excluded_types: ["MODE_BRAINSTORMING"]
+      
+    Integration_Testing:
+      required_types: ["MODE_INTEGRATION_TESTING"]
+      optional_types: ["UTILITY_ENFORCER", "KNOWLEDGE_RULES"]
+      excluded_types: []
+      
+    Content_Sync:
+      required_types: ["MODE_CONTENT_SYNC"]
+      optional_types: ["UTILITY_ENFORCER"]
+      excluded_types: []
+
+# Quality gates and validation rules
+quality_gates:
+  metadata_validation:
+    required_fields: ["rule_type", "priority", "scope", "requires", "conflicts", "activation_conditions", "description", "version"]
+    version_format: "semantic"   # x.y.z format
+    scope_validation: true
+    
+  dependency_validation:
+    check_circular_dependencies: true
+    validate_required_rules_exist: true
+    warn_on_deep_dependencies: 5  # Max dependency depth
+    
+  performance_validation:
+    max_file_size: 1048576       # 1MB per rule file
+    max_loading_time: 5000       # 5 seconds
+    memory_usage_threshold: 0.1   # 10% of available memory
+
+# Monitoring and analytics
+monitoring:
+  enabled: true
+  metrics:
+    rule_activation_frequency: true
+    mode_transition_patterns: true
+    conflict_resolution_success_rate: true
+    rule_loading_performance: true
+    memory_usage_tracking: true
+    
+  alerts:
+    high_conflict_rate: 0.1      # 10% conflict rate threshold
+    slow_loading_threshold: 3000 # 3 seconds
+    memory_usage_threshold: 0.8  # 80% memory usage
+    
+  reporting:
+    daily_summary: true
+    weekly_analysis: true
+    export_format: "json"        # json | yaml | csv
+
+# Security and safety settings
+security:
+  sandbox_mode: false           # Isolate rule execution
+  allowed_file_operations:
+    - "read"
+    - "write"
+    - "create"
+  restricted_paths:
+    - "/etc"
+    - "/usr"
+    - "/bin"
+  code_execution_limits:
+    max_execution_time: 30000   # 30 seconds
+    memory_limit: 134217728     # 128MB
+
+# Development and debugging
+development:
+  debug_mode: false
+  verbose_logging: false
+  rule_trace_enabled: false
+  performance_profiling: false
+  
+  testing:
+    auto_validate_on_load: true
+    run_integration_tests: false
+    mock_dependencies: false
+
+# Rule-specific overrides
+rule_overrides:
+  # Override specific rule behaviors
+  "safe-code-generation.mdc":
+    priority: 3
+    always_load: true
+    cache_exempt: true
+    
+  "enforcer.mdc":
+    priority: 3
+    strict_validation: true
+    escalation_enabled: true
+
+# Backward compatibility
+compatibility:
+  legacy_rule_support: true
+  auto_migration: false
+  deprecation_warnings: true
+  minimum_version: "1.0.0"
+
+# Integration settings
+integrations:
+  cursor_ide:
+    auto_reload_on_change: true
+    show_rule_status: true
+    notification_level: "important" # all | important | errors
+    
+  mcp_tools:
+    sequential_thinking: true
+    web_search: true
+    interactive_mcp: true
+    playwright: true
+    
+  external_systems:
+    github_integration: false
+    slack_notifications: false
+    analytics_tracking: false 

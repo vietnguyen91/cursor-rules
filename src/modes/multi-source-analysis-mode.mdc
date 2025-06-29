@@ -6,6 +6,21 @@ alwaysApply: false
 # 🔍 Multi-Source Analysis Mode
 Comprehensive analysis of multiple data sources for consistent website cloning with intelligent data reconciliation.
 
+```yaml
+# Rule Metadata
+rule_type: MODE_MULTI_SOURCE
+priority: 2
+scope: ["multi-source", "data-fusion", "conflict-resolution"]
+requires: ["UTILITY_ENFORCER"]
+conflicts: []
+activation_conditions:
+  - mode: "Multi_Source_Analysis"
+  - manual_request: ["analyze all sources", "compare sources", "multi-source"]
+  - multiple_targets_exist: true
+description: "Multi-source data analysis with intelligent conflict resolution and data fusion"
+version: "2.0.0"
+```
+
 ## 🎯 Activation
 - User requests to analyze multiple sources: "analyze all sources", "compare sources"
 - Target analysis reveals multiple data sources available

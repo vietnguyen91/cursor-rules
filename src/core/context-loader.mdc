@@ -6,6 +6,20 @@ alwaysApply: true
 # 📦 Context Loader
 Intelligently load context including **deep knowledge**, **safety rules**, and **MCP tool access** based on mode requirements.
 
+```yaml
+# Rule Metadata
+rule_type: ORCHESTRATION_RULES
+priority: 1
+scope: ["all-projects", "context-management"]
+requires: []
+conflicts: []
+activation_conditions:
+  - always_active: true
+  - triggered_by: "mode_change"
+description: "Intelligent context loader with MCP tools integration"
+version: "4.0.0"
+```
+
 ## 🧰 MCP Tools Integration
 The context loader now provides access to enhanced MCP tools based on the current mode:
 - **Brainstorming Mode**: Web Search, Context7, Sequential Thinking, Interactive MCP

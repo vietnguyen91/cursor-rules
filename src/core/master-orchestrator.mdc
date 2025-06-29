@@ -6,6 +6,20 @@ alwaysApply: true
 # 🧭 Master Orchestrator (v4 - Deterministic)
 Orchestrate the entire workflow by **determining a single active mode** based on the project state.
 
+```yaml
+# Rule Metadata
+rule_type: ORCHESTRATION_RULES
+priority: 1
+scope: ["all-projects", "workflow-control"]
+requires: []
+conflicts: []
+activation_conditions:
+  - always_active: true
+  - first_to_load: true
+description: "Master workflow orchestrator with deterministic mode detection"
+version: "4.0.0"
+```
+
 ## 🤖 **Mode Detection Logic (Website Clone Enhanced)**
 The agent MUST check these conditions by **iterating through all feature-specific index files** and **analyzing user requests**.
 

@@ -1,0 +1,410 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 🏷️ Rule Type System
+Comprehensive classification and management system for workflow rules.
+
+## 📊 Rule Type Categories
+
+### 🎯 **Core Rule Types**
+
+#### 1. **ORCHESTRATION_RULES** (Priority: 1 - Highest)
+- **Purpose**: Master orchestrator and mode detection logic
+- **Scope**: System-wide workflow control
+- **Files**: `master-orchestrator.mdc`, `context-loader.mdc`
+- **Activation**: Always active, first to load
+- **Characteristics**:
+  - Cannot be overridden by project-specific rules
+  - Controls mode transitions and workflow state
+  - Defines the fundamental workflow behavior
+
+#### 2. **MODE_RULES** (Priority: 2 - High)
+- **Purpose**: Mode-specific behaviors and constraints
+- **Scope**: Active mode context
+- **Files**: All files in `modes/` directory
+- **Activation**: Based on current detected mode
+- **Subtypes**:
+  - `MODE_BRAINSTORMING`: Creative ideation and exploration
+  - `MODE_TARGET_ANALYSIS`: Website analysis and compliance
+  - `MODE_MULTI_SOURCE`: Multi-source data management
+  - `MODE_ARCHITECTURE_PLANNING`: System design and blueprints
+  - `MODE_DEVELOPING`: Code generation and implementation
+  - `MODE_INTEGRATION_TESTING`: Validation and quality assurance
+  - `MODE_CONTENT_SYNC`: Production content management
+  - `MODE_DOCUMENTING`: Documentation generation
+
+#### 3. **UTILITY_RULES** (Priority: 3 - Medium-High)
+- **Purpose**: Safety, enforcement, and specialized tools
+- **Scope**: Context-dependent utility functions
+- **Files**: All files in `utilities/` directory
+- **Activation**: Triggered by mode requirements or specific contexts
+- **Subtypes**:
+  - `UTILITY_SAFE_CODE`: Read-Modify-Write-Verify cycle enforcement
+  - `UTILITY_ENFORCER`: Rule violation prevention and warnings
+  - `UTILITY_QUALITY`: Code quality and standards enforcement
+  - `UTILITY_SECURITY`: Security and compliance checks
+
+#### 4. **PROJECT_RULES** (Priority: 4 - Medium)
+- **Purpose**: Project-specific customizations and context
+- **Scope**: Individual project configuration
+- **Files**: `.cursor-rules`, project-specific `.mdc` files
+- **Activation**: Always active for project context
+- **Subtypes**:
+  - `PROJECT_CONTEXT`: Project-specific information and priorities
+  - `PROJECT_STANDARDS`: Coding standards and conventions
+  - `PROJECT_CONSTRAINTS`: Business rules and limitations
+  - `PROJECT_PREFERENCES`: Team preferences and workflows
+
+#### 5. **TEMPLATE_RULES** (Priority: 5 - Medium-Low)
+- **Purpose**: Standard templates and scaffolding
+- **Scope**: Template generation and structure
+- **Files**: All files in `templates/` directory
+- **Activation**: On-demand when creating new artifacts
+- **Subtypes**:
+  - `TEMPLATE_TASK`: Task creation templates
+  - `TEMPLATE_BLUEPRINT`: Architecture blueprint templates
+  - `TEMPLATE_ANALYSIS`: Analysis document templates
+  - `TEMPLATE_FEATURE`: Feature documentation templates
+
+#### 6. **KNOWLEDGE_RULES** (Priority: 6 - Low)
+- **Purpose**: Reference documentation and learning materials
+- **Scope**: Educational and reference content
+- **Files**: All files in `knowledge/` directory
+- **Activation**: On-demand for learning and reference
+- **Subtypes**:
+  - `KNOWLEDGE_CURSOR`: Cursor IDE specific knowledge
+  - `KNOWLEDGE_AGENT`: AI agent behavior patterns
+  - `KNOWLEDGE_BEST_PRACTICES`: Industry best practices
+  - `KNOWLEDGE_TROUBLESHOOTING`: Problem resolution guides
+
+## 🔄 Rule Application Logic
+
+### **Rule Loading Sequence**
+```yaml
+Loading Order:
+  1. ORCHESTRATION_RULES → Mode Detection
+  2. MODE_RULES → Current Mode Context
+  3. UTILITY_RULES → Safety & Enforcement (if required)
+  4. PROJECT_RULES → Project-Specific Context
+  5. TEMPLATE_RULES → On-Demand Templates
+  6. KNOWLEDGE_RULES → Reference Documentation
+```
+
+### **Rule Conflict Resolution**
+```yaml
+Priority Hierarchy (Higher priority overrides lower):
+  1. ORCHESTRATION_RULES (Cannot be overridden)
+  2. MODE_RULES (Mode-specific behavior)
+  3. UTILITY_RULES (Safety enforcement)
+  4. PROJECT_RULES (Project customization)
+  5. TEMPLATE_RULES (Default templates)
+  6. KNOWLEDGE_RULES (Reference only)
+
+Conflict Resolution Strategy:
+  - Same Priority: Last loaded wins
+  - Different Priority: Higher priority wins
+  - Safety Rules: Always enforced regardless
+```
+
+## 🎯 Rule Type Detection
+
+### **Automatic Rule Classification**
+```yaml
+File Path Patterns:
+  core/master-orchestrator.mdc: ORCHESTRATION_RULES
+  core/context-loader.mdc: ORCHESTRATION_RULES
+  modes/*.mdc: MODE_RULES
+  utilities/*.mdc: UTILITY_RULES
+  templates/*.md: TEMPLATE_RULES
+  templates/*.yaml: TEMPLATE_RULES
+  knowledge/*.md: KNOWLEDGE_RULES
+  .cursor-rules: PROJECT_RULES
+  
+Content-Based Detection:
+  - Contains "Mode Detection": ORCHESTRATION_RULES
+  - Contains "# Mode:": MODE_RULES
+  - Contains "# Utility:": UTILITY_RULES
+  - Contains "# Template:": TEMPLATE_RULES
+  - Contains "## Project Context": PROJECT_RULES
+```
+
+### **Rule Metadata System**
+Each rule file should include metadata header:
+```yaml
+# Rule Metadata
+rule_type: MODE_DEVELOPING
+priority: 2
+scope: ["web-development", "scraping", "multi-source"]
+requires: ["UTILITY_SAFE_CODE", "UTILITY_ENFORCER"]
+conflicts: []
+activation_conditions:
+  - mode: "Developing"
+  - task_status: ["approved", "developing"]
+description: "Safe code generation and development workflows"
+version: "2.0.0"
+```
+
+## 🏗️ Mode-Specific Rule Mapping
+
+### **Brainstorming Mode**
+```yaml
+Active Rules:
+  - ORCHESTRATION_RULES (always)
+  - MODE_BRAINSTORMING (primary)
+  - PROJECT_RULES (context)
+  - TEMPLATE_RULES (idea templates)
+  - KNOWLEDGE_RULES (research)
+
+Excluded Rules:
+  - UTILITY_SAFE_CODE (no coding yet)
+  - MODE_DEVELOPING
+  - MODE_TESTING
+```
+
+### **Target Analysis Mode**
+```yaml
+Active Rules:
+  - ORCHESTRATION_RULES (always)
+  - MODE_TARGET_ANALYSIS (primary)
+  - PROJECT_RULES (context)
+  - TEMPLATE_ANALYSIS (analysis templates)
+  - KNOWLEDGE_RULES (legal compliance)
+
+Special Considerations:
+  - Legal compliance enforcement
+  - Security analysis requirements
+  - Performance baseline establishment
+```
+
+### **Multi-Source Analysis Mode**
+```yaml
+Active Rules:
+  - ORCHESTRATION_RULES (always)
+  - MODE_MULTI_SOURCE (primary)
+  - UTILITY_ENFORCER (data quality)
+  - PROJECT_RULES (context)
+  - TEMPLATE_ANALYSIS (multi-source templates)
+
+Special Features:
+  - Conflict resolution engine
+  - Data quality scoring
+  - Source prioritization
+```
+
+### **Architecture Planning Mode**
+```yaml
+Active Rules:
+  - ORCHESTRATION_RULES (always)
+  - MODE_ARCHITECTURE_PLANNING (primary)
+  - PROJECT_RULES (context)
+  - TEMPLATE_BLUEPRINT (architecture templates)
+  - KNOWLEDGE_RULES (best practices)
+
+Focus Areas:
+  - Scalability planning
+  - Technology stack decisions
+  - Database design
+  - API architecture
+```
+
+### **Developing Mode**
+```yaml
+Active Rules:
+  - ORCHESTRATION_RULES (always)
+  - MODE_DEVELOPING (primary)
+  - UTILITY_SAFE_CODE (mandatory)
+  - UTILITY_ENFORCER (mandatory)
+  - PROJECT_RULES (context)
+  - TEMPLATE_TASK (task templates)
+
+Safety Requirements:
+  - Read-Modify-Write-Verify cycle
+  - Code quality enforcement
+  - Test coverage requirements
+  - Security scanning
+```
+
+### **Integration Testing Mode**
+```yaml
+Active Rules:
+  - ORCHESTRATION_RULES (always)
+  - MODE_INTEGRATION_TESTING (primary)
+  - UTILITY_ENFORCER (quality gates)
+  - PROJECT_RULES (context)
+  - KNOWLEDGE_RULES (testing best practices)
+
+Testing Focus:
+  - Multi-source validation
+  - Performance testing
+  - Data quality verification
+  - Security testing
+```
+
+### **Content Sync Mode**
+```yaml
+Active Rules:
+  - ORCHESTRATION_RULES (always)
+  - MODE_CONTENT_SYNC (primary)
+  - UTILITY_ENFORCER (production safety)
+  - PROJECT_RULES (context)
+
+Production Requirements:
+  - Zero-downtime deployments
+  - Data consistency monitoring
+  - Automated rollback capabilities
+  - Real-time alerting
+```
+
+### **Documenting Mode**
+```yaml
+Active Rules:
+  - ORCHESTRATION_RULES (always)
+  - MODE_DOCUMENTING (primary)
+  - PROJECT_RULES (context)
+  - TEMPLATE_RULES (documentation templates)
+  - KNOWLEDGE_RULES (documentation standards)
+
+Documentation Types:
+  - Technical specifications
+  - User guides
+  - API documentation
+  - Deployment guides
+```
+
+## 📋 Rule Validation System
+
+### **Rule Health Checks**
+```yaml
+Validation Criteria:
+  metadata_present: Required for all rule files
+  rule_type_valid: Must match defined types
+  priority_assigned: Must have valid priority (1-6)
+  activation_conditions: Must specify when to activate
+  conflict_resolution: Must define conflict handling
+  
+Health Check Command:
+  validate_rules --path=src/ --fix-issues --report
+```
+
+### **Rule Dependency Management**
+```yaml
+Dependency Types:
+  requires: Rules that must be loaded together
+  conflicts: Rules that cannot be active simultaneously  
+  suggests: Optional complementary rules
+  
+Dependency Resolution:
+  - Auto-load required dependencies
+  - Warn about conflicts before activation
+  - Suggest complementary rules when appropriate
+```
+
+## 🔧 Rule Engine Configuration
+
+### **Rule Engine Settings**
+```yaml
+# .cursor-rules-config.yaml
+rule_engine:
+  strict_mode: true              # Enforce all validations
+  auto_resolve_conflicts: true   # Automatic conflict resolution
+  load_suggested_rules: false    # Manual suggestion approval
+  cache_rule_metadata: true     # Performance optimization
+  
+  rule_discovery:
+    scan_paths: ["src/", ".cursor-rules/"]
+    file_patterns: ["*.mdc", "*.md", ".cursor-rules"]
+    metadata_required: true
+    
+  conflict_resolution:
+    strategy: "priority_based"   # priority_based | manual | automatic
+    log_resolutions: true
+    notify_overrides: true
+    
+  performance:
+    lazy_loading: true           # Load rules on-demand
+    cache_duration: 3600        # 1 hour rule cache
+    parallel_loading: true      # Load compatible rules in parallel
+```
+
+### **Rule Activation Matrix**
+```yaml
+# Rule activation based on project state and mode
+Activation Matrix:
+  project_type:
+    website_clone:
+      modes: [target_analysis, architecture_planning, developing, integration_testing, content_sync]
+      utilities: [safe_code, enforcer]
+      
+    multi_source:
+      modes: [multi_source_analysis, architecture_planning, developing, content_sync]
+      utilities: [enforcer, quality]
+      
+    general_development:
+      modes: [brainstorming, planning, developing, documenting]
+      utilities: [safe_code, enforcer]
+      
+  current_mode:
+    brainstorming:
+      required: [MODE_BRAINSTORMING]
+      optional: [KNOWLEDGE_RULES, TEMPLATE_RULES]
+      excluded: [UTILITY_SAFE_CODE]
+      
+    developing:
+      required: [MODE_DEVELOPING, UTILITY_SAFE_CODE, UTILITY_ENFORCER]
+      optional: [TEMPLATE_TASK]
+      excluded: [MODE_BRAINSTORMING]
+```
+
+## 🎯 Implementation Guidelines
+
+### **Rule Development Standards**
+1. **Every rule file MUST include metadata header**
+2. **Use semantic versioning for rule versions**
+3. **Document activation conditions clearly**
+4. **Specify dependencies and conflicts explicitly**
+5. **Include validation tests for rule logic**
+6. **Follow naming conventions: rule_type_specific_name.mdc**
+
+### **Rule Testing Strategy**
+```yaml
+Testing Levels:
+  unit: Individual rule validation
+  integration: Rule interaction testing
+  system: Full workflow testing
+  
+Test Coverage:
+  - Rule metadata validation
+  - Activation condition testing
+  - Conflict resolution testing
+  - Performance impact testing
+  - Mode transition testing
+```
+
+### **Rule Performance Optimization**
+- **Lazy Loading**: Load rules only when needed
+- **Rule Caching**: Cache frequently used rules
+- **Parallel Processing**: Load compatible rules simultaneously
+- **Dependency Optimization**: Minimize rule dependencies
+- **Memory Management**: Unload inactive rules
+
+---
+
+## 📊 Rule Analytics & Monitoring
+
+### **Rule Usage Metrics**
+- Rule activation frequency
+- Mode transition patterns
+- Conflict resolution success rate
+- Rule loading performance
+- User satisfaction with rule suggestions
+
+### **Rule Maintenance**
+- Automated rule health checks
+- Version compatibility tracking
+- Performance impact monitoring
+- Rule usage analytics
+- Community feedback integration
+
+This rule type system ensures **intelligent, priority-based rule management** with **automatic conflict resolution** and **optimal performance** across all workflow modes.

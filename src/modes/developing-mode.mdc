@@ -6,6 +6,20 @@ alwaysApply: false
 # 🔧 Developing Mode
 Execute tasks based on knowledge sources and safety rules, enhanced with MCP tools for superior code quality.
 
+```yaml
+# Rule Metadata
+rule_type: MODE_DEVELOPING
+priority: 2
+scope: ["code-generation", "implementation"]
+requires: ["UTILITY_SAFE_CODE", "UTILITY_ENFORCER"]
+conflicts: ["MODE_BRAINSTORMING"]
+activation_conditions:
+  - mode: "Developing"
+  - task_status: ["approved", "developing"]
+description: "Safe code generation and development workflows with mandatory safety utilities"
+version: "2.0.0"
+```
+
 ## 🎯 Activation
 Activated exclusively by the `master-orchestrator` when tasks are `approved` or `developing`.
 
