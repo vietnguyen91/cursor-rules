@@ -1,301 +1,252 @@
-# 🚀 Quick Install Guide
-## Cursor Rules Agent v2.0.0 - Multi-Source Website Clone System
+# 🚀 Quick Install Guide - Cursor Rules Agent
 
-*Test the installation process and verify everything works correctly.*
+## 📋 Installation Methods
 
----
+### 🔓 Public Repository Installation
 
-## 🎯 **One-Line Installation (Recommended)**
+If the repository is public, installation is straightforward:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
-```
-
----
-
-## 🧪 **Testing Installation**
-
-### **Test 1: New Project Setup**
-```bash
-# Create test directory
-mkdir test-cursor-rules && cd test-cursor-rules
-
-# Run installer
+# Method 1: Shell script (recommended)
 curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
 
-# Verify structure
-ls -la .cursor/rules/
-ls -la docs/
-```
+# Method 2: NPX
+npx cursor-rules-agent-installer
 
-### **Test 2: Website Clone Project**
-```bash
-# Create clone project
-mkdir my-movie-clone && cd my-movie-clone
-
-# Run installer (should detect as website-clone type)
-curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
-
-# Check configuration
-cat .cursor-rules-config.js
-```
-
-### **Test 3: Existing Project Integration**
-```bash
-# Go to existing project
-cd your-existing-project
-
-# Install cursor rules
-curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
-
-# Verify no conflicts with existing files
+# Method 3: Git clone
+git clone https://github.com/vietnguyen91/cursor-rules.git
+cd cursor-rules/cursor-rules-agent
+npm run install-local
 ```
 
 ---
 
-## ✅ **Verification Checklist**
+### 🔐 Private Repository Installation
 
-### **Directory Structure Created:**
-```
-✅ .cursor/rules/core/
-✅ .cursor/rules/modes/
-✅ .cursor/rules/utilities/
-✅ .cursor/rules/templates/
-✅ docs/specs/
-✅ docs/features/
-✅ docs/targets/
-✅ docs/blueprints/
-✅ docs/tasks/
-```
+For private repositories, you'll need a GitHub token:
 
-### **Core Files Present:**
-```
-✅ .cursor/rules/core/master-orchestrator.mdc
-✅ .cursor/rules/core/context-loader.mdc
-✅ .cursor/rules/modes/multi-source-analysis-mode.mdc
-✅ .cursor/rules/modes/target-analysis-mode.mdc
-✅ .cursor/rules/modes/architecture-planning-mode.mdc
-✅ .cursor/rules/modes/developing-mode.mdc
-✅ .cursor/rules/modes/integration-testing-mode.mdc
-✅ .cursor/rules/modes/content-sync-mode.mdc
+#### **Step 1: Create GitHub Token**
+
+1. Go to [GitHub Settings > Personal Access Tokens](https://github.com/settings/tokens)
+2. Click **"Generate new token (classic)"**
+3. Configure token:
+   - **Name**: `Cursor Rules Agent`
+   - **Scopes**: Select `repo` (for private repositories)
+   - **Expiration**: Choose appropriate duration
+4. **Copy the token** - you'll need it for installation
+
+#### **Step 2: Install with Token**
+
+Choose one of these methods:
+
+**🔧 Method A: Environment Variable (Recommended)**
+```bash
+# Set token and install in one command
+export GITHUB_TOKEN=your_github_token_here
+curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
 ```
 
-### **Templates & Documentation:**
+**🔧 Method B: .env File**
+```bash
+# Create .env file in your project directory
+echo "GITHUB_TOKEN=your_github_token_here" > .env
+
+# Run installer (it will auto-detect the token)
+curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
 ```
-✅ USER_RULES_TEMPLATE.md
-✅ MULTI_SOURCE_WORKFLOW_EXAMPLE.md
-✅ WEBSITE_CLONE_WORKFLOW_EXAMPLE.md
-✅ docs/tasks/task-index.json
-✅ .cursor-rules-config.js
+
+**🔧 Method C: NPX with Token**
+```bash
+# Set token for Node.js installer
+export GITHUB_TOKEN=your_github_token_here
+npx cursor-rules-agent-installer
+```
+
+**🔧 Method D: Git Clone with Authentication**
+```bash
+# Clone with token authentication
+git clone https://your_token@github.com/vietnguyen91/cursor-rules.git
+cd cursor-rules/cursor-rules-agent
+GITHUB_TOKEN=your_token npm run install-local
 ```
 
 ---
 
-## 🎬 **Quick Start Test**
+## ⚡ Quick Start Commands
 
-### **1. Setup User Rules in Cursor:**
+After installation, try these commands in Cursor:
+
+### 🌐 For Website Cloning Projects
 ```bash
-# Copy content from USER_RULES_TEMPLATE.md
-cat USER_RULES_TEMPLATE.md
-```
-- Open Cursor Settings > Rules
-- Paste the content
-- Save settings
-
-### **2. Test Basic Workflow:**
-Open Cursor IDE in your project and try:
-
-```
-"bootstrap project structure"
-```
-
-Expected response: Agent detects Initializing Mode and sets up project.
-
-### **3. Test Multi-Source Analysis:**
-```
-"analyze all sources for data consistency"
-```
-
-Expected response: Agent switches to Multi-Source Analysis Mode.
-
-### **4. Test Website Clone Workflow:**
-```
 "clone website https://example.com"
+"analyze all sources for data consistency"
+"setup multi-source scraping architecture"
 ```
 
-Expected response: Agent enters Target Analysis Mode.
+### 🛠 For General Development Projects
+```bash
+"bootstrap project structure"
+"brainstorm new feature ideas"
+"plan feature: User Authentication"
+"work on TASK_001"
+```
 
 ---
 
-## 🔧 **Troubleshooting**
+## 🔧 Environment Configuration
 
-### **Common Issues:**
+### Required Environment Variables
 
-#### **Issue: "curl command not found"**
 ```bash
-# Install curl on macOS
+# .env file template
+# GitHub Authentication (for private repositories)
+GITHUB_TOKEN=your_github_token_here
+
+# Database Configuration (for website clones)
+MONGODB_URI=mongodb://localhost:27017/your_database
+REDIS_URL=redis://localhost:6379
+
+# Storage Configuration
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_S3_BUCKET=your_s3_bucket
+
+# Application Configuration
+NODE_ENV=development
+PORT=3000
+API_BASE_URL=http://localhost:3000
+```
+
+### User Rules Setup
+
+1. Copy content from `USER_RULES_TEMPLATE.md`
+2. Paste into **Cursor Settings > Rules > User Rules**
+3. This enables the AI workflow system
+
+---
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**❌ "Repository requires authentication"**
+```bash
+# Solution: Set GitHub token
+export GITHUB_TOKEN=your_token_here
+
+# Or create .env file:
+echo "GITHUB_TOKEN=your_token_here" > .env
+```
+
+**❌ "Failed to download files"**
+- Check your GitHub token has `repo` scope
+- Verify token hasn't expired
+- Ensure you're connected to the internet
+
+**❌ "Permission denied"**
+```bash
+# Ensure you have write permissions
+chmod +w .
+sudo chown $USER:$USER .
+```
+
+**❌ "Command not found: curl"**
+```bash
+# Install curl (Ubuntu/Debian)
+sudo apt update && sudo apt install curl
+
+# Install curl (macOS)
 brew install curl
 
-# Install curl on Ubuntu/Debian
-sudo apt-get install curl
-
-# Install curl on CentOS/RHEL
-sudo yum install curl
-```
-
-#### **Issue: "Permission denied"**
-```bash
-# Ensure write permissions
-chmod 755 .
-```
-
-#### **Issue: "Files not downloading"**
-```bash
-# Check internet connection
-ping github.com
-
-# Try manual download
-wget https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/README.md
-```
-
-#### **Issue: "Cursor not recognizing rules"**
-1. Ensure `.cursor/rules/` directory exists in project root
-2. Check Cursor Settings > Rules has content from USER_RULES_TEMPLATE.md
-3. Restart Cursor IDE
-4. Try typing a workflow command
-
----
-
-## 📊 **Performance Test**
-
-### **Installation Speed Test:**
-```bash
-time curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
-```
-
-Expected: < 30 seconds for complete installation
-
-### **File Size Verification:**
-```bash
-# Check total size
-du -sh .cursor/rules/
-du -sh docs/
-
-# Count files
-find .cursor/rules/ -type f | wc -l
-```
-
-Expected: 
-- Rules directory: ~500KB
-- Documentation: ~200KB  
-- Total files: 15+ rule files
-
----
-
-## 🎯 **Advanced Testing**
-
-### **Test Multi-Source Configuration:**
-```javascript
-// Test .cursor-rules-config.js for website-clone projects
-module.exports = {
-  mode: "website-clone",
-  target_analysis: {
-    legal_compliance: true,
-    performance_baseline: true,
-    content_structure_mapping: true
-  },
-  scraping_strategy: {
-    multi_layer_architecture: true,
-    intelligent_rate_limiting: true,
-    content_deduplication: true
-  }
-}
-```
-
-### **Test Task Index Structure:**
-```json
-{
-  "project": {
-    "name": "test-project",
-    "version": "1.0.0",
-    "type": "website-clone",
-    "created": "2025-01-16T..."
-  },
-  "features": [],
-  "statistics": {
-    "total_tasks": 0,
-    "completed_tasks": 0,
-    "active_features": 0
-  }
-}
+# Install curl (Windows/WSL)
+sudo apt install curl
 ```
 
 ---
 
-## 🚀 **Real-World Test Scenarios**
+## 📂 What Gets Installed
 
-### **Scenario 1: Movie Site Clone**
-```bash
-mkdir rophim-clone && cd rophim-clone
-curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
-
-# In Cursor IDE:
-"analyze target website rophim.me with multi-source support"
 ```
-
-### **Scenario 2: E-commerce Aggregation**
-```bash
-mkdir ecom-aggregator && cd ecom-aggregator  
-curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
-
-# In Cursor IDE:
-"analyze all e-commerce sources for product data consistency"
-```
-
-### **Scenario 3: News Aggregation**
-```bash
-mkdir news-aggregator && cd news-aggregator
-curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
-
-# In Cursor IDE:
-"compare multiple news sources for content syndication"
+your-project/
+├── .cursor/rules/              # AI workflow rules
+│   ├── core/                   # Core orchestrator files
+│   ├── modes/                  # Mode-specific rules
+│   ├── utilities/              # Safety & enforcement
+│   └── templates/              # Task & blueprint templates
+├── docs/                       # Documentation structure
+│   ├── specs/                  # Technical specifications
+│   ├── features/               # Feature definitions
+│   ├── targets/                # Target analysis (website clones)
+│   ├── blueprints/             # Architecture templates
+│   └── tasks/                  # Task management
+│       └── task-index.json     # Central task tracking
+├── .env.example                # Environment template
+├── .gitignore                  # Git ignore rules
+├── USER_RULES_TEMPLATE.md      # Cursor user rules
+├── MULTI_SOURCE_WORKFLOW_EXAMPLE.md
+├── WEBSITE_CLONE_WORKFLOW_EXAMPLE.md
+└── QUICK_INSTALL_GUIDE.md      # This guide
 ```
 
 ---
 
-## ✨ **Success Indicators**
+## 🚀 Advanced Installation Options
 
-### **✅ Installation Successful When:**
-1. All directories and files created without errors
-2. Installer shows green "Installation Complete!" message
-3. Configuration file matches project type
-4. Task index file is valid JSON
-5. Cursor IDE recognizes workflow commands
+### Docker Installation
+```bash
+# Run installer in Docker
+docker run --rm -v $(pwd):/workspace -w /workspace \
+  -e GITHUB_TOKEN=$GITHUB_TOKEN \
+  node:18-alpine sh -c "
+    apk add --no-cache curl bash &&
+    curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
+  "
+```
 
-### **✅ Workflow Active When:**
-1. Typing workflow commands triggers appropriate mode
-2. Agent shows mode-specific responses
-3. Context loading works correctly
-4. MCP tools integration functions
+### CI/CD Integration
+```yaml
+# GitHub Actions example
+- name: Install Cursor Rules Agent
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
+```
 
-### **✅ Ready for Production When:**
-1. All test scenarios work
-2. Real project commands execute properly
-3. Multi-source analysis functions correctly
-4. Documentation is accessible
+### Automated Team Setup
+```bash
+#!/bin/bash
+# team-setup.sh - Deploy to entire team
+
+# Set your team's private repository
+export GITHUB_TOKEN=${TEAM_GITHUB_TOKEN}
+
+# Install in multiple projects
+for project in project1 project2 project3; do
+  cd $project
+  curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
+  cd ..
+done
+```
 
 ---
 
-## 📞 **Get Help**
+## 📚 Next Steps
 
-If you encounter issues:
-
-1. **Check Installation Log:** Look for error messages during installation
-2. **Verify File Permissions:** Ensure read/write access to project directory
-3. **Check Cursor Settings:** Verify User Rules are properly configured
-4. **Try Manual Setup:** Use the manual installation method if automated fails
-5. **Report Issues:** https://github.com/vietnguyen91/cursor-rules/issues
+1. **Configure Cursor**: Add User Rules to Cursor Settings
+2. **Set Environment**: Copy `.env.example` to `.env` and configure
+3. **Try Commands**: Start with `"bootstrap project structure"`
+4. **Read Examples**: Check `WEBSITE_CLONE_WORKFLOW_EXAMPLE.md`
+5. **Join Community**: [GitHub Discussions](https://github.com/vietnguyen91/cursor-rules/discussions)
 
 ---
 
-**🎉 Ready to build your next multi-source website clone? Happy coding! 🚀** 
+## 🤝 Support
+
+- 🐛 **Issues**: [GitHub Issues](https://github.com/vietnguyen91/cursor-rules/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/vietnguyen91/cursor-rules/discussions)
+- 📖 **Documentation**: [README.md](README.md)
+
+---
+
+**Happy coding! 🎉** 

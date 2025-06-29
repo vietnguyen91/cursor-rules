@@ -12,6 +12,10 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# GitHub configuration
+GITHUB_REPO="vietnguyen91/cursor-rules"
+GITHUB_BASE_URL="https://raw.githubusercontent.com/${GITHUB_REPO}/main"
+
 # Print colored output
 print_status() {
     echo -e "${BLUE}[INFO]${NC} $1"
@@ -34,8 +38,77 @@ print_header() {
     echo -e "${BLUE}╔══════════════════════════════════════════════════════════════╗${NC}"
     echo -e "${BLUE}║           🤖 Cursor Rules Agent v2.0.0 Installer            ║${NC}"
     echo -e "${BLUE}║        Multi-Source Website Clone & AI Workflow System      ║${NC}"
+    echo -e "${BLUE}║                  Private Repository Support                  ║${NC}"
     echo -e "${BLUE}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
+}
+
+# Check for GitHub token and set authentication
+setup_github_auth() {
+    if [ -n "$GITHUB_TOKEN" ]; then
+        print_status "GitHub token detected - using authenticated access"
+        CURL_AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
+        return 0
+    fi
+    
+    # Check if token is in environment file
+    if [ -f ".env" ] && grep -q "GITHUB_TOKEN" .env; then
+        print_status "Loading GitHub token from .env file"
+        export $(grep "GITHUB_TOKEN" .env | xargs)
+        if [ -n "$GITHUB_TOKEN" ]; then
+            CURL_AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
+            return 0
+        fi
+    fi
+    
+    # Prompt user for token if repository is private
+    print_warning "No GitHub token found. If this is a private repository, you'll need to provide a token."
+    
+    # Test if repository is accessible without token
+    if curl -f -s "$GITHUB_BASE_URL/README.md" > /dev/null 2>&1; then
+        print_status "Repository is publicly accessible"
+        CURL_AUTH_HEADER=""
+        return 0
+    else
+        print_error "Repository requires authentication. Please provide a GitHub token."
+        echo ""
+        echo "To create a GitHub token:"
+        echo "1. Go to https://github.com/settings/tokens"
+        echo "2. Click 'Generate new token (classic)'"
+        echo "3. Select 'repo' scope for private repositories"
+        echo "4. Copy the token and set it as an environment variable:"
+        echo "   export GITHUB_TOKEN=your_token_here"
+        echo ""
+        echo "Then run this installer again."
+        exit 1
+    fi
+}
+
+# Download file with authentication
+download_file() {
+    local url="$1"
+    local output="$2"
+    local description="$3"
+    
+    if [ -n "$CURL_AUTH_HEADER" ]; then
+        if curl -f -s -H "$CURL_AUTH_HEADER" "$url" -o "$output"; then
+            print_status "Downloaded: $description"
+            return 0
+        else
+            print_error "Failed to download: $description"
+            print_error "URL: $url"
+            return 1
+        fi
+    else
+        if curl -f -s "$url" -o "$output"; then
+            print_status "Downloaded: $description"
+            return 0
+        else
+            print_error "Failed to download: $description"
+            print_error "URL: $url"
+            return 1
+        fi
+    fi
 }
 
 # Check prerequisites
@@ -45,6 +118,12 @@ check_prerequisites() {
     # Check if git is installed
     if ! command -v git &> /dev/null; then
         print_error "Git is required but not installed. Please install Git first."
+        exit 1
+    fi
+    
+    # Check if curl is installed
+    if ! command -v curl &> /dev/null; then
+        print_error "Curl is required but not installed. Please install Curl first."
         exit 1
     fi
     
@@ -92,44 +171,74 @@ create_directory_structure() {
     print_success "Directory structure created!"
 }
 
-# Download cursor rules files
+# Download cursor rules files with authentication
 download_cursor_rules() {
     print_status "Downloading Cursor Rules Agent files..."
     
-    local base_url="https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main"
+    # Create arrays of files to download
+    declare -A core_files=(
+        ["master-orchestrator.mdc"]="Core orchestrator"
+        ["context-loader.mdc"]="Context loader"
+    )
     
-    # Core files
-    curl -fsSL "$base_url/src/core/master-orchestrator.mdc" -o .cursor/rules/core/master-orchestrator.mdc
-    curl -fsSL "$base_url/src/core/context-loader.mdc" -o .cursor/rules/core/context-loader.mdc
+    declare -A mode_files=(
+        ["multi-source-analysis-mode.mdc"]="Multi-source analysis mode"
+        ["target-analysis-mode.mdc"]="Target analysis mode"
+        ["architecture-planning-mode.mdc"]="Architecture planning mode"
+        ["developing-mode.mdc"]="Developing mode"
+        ["integration-testing-mode.mdc"]="Integration testing mode"
+        ["content-sync-mode.mdc"]="Content sync mode"
+        ["brainstorming-mode.mdc"]="Brainstorming mode"
+        ["planning-agent.mdc"]="Planning agent mode"
+        ["documenting-mode.mdc"]="Documenting mode"
+        ["initializing-mode.mdc"]="Initializing mode"
+    )
     
-    # Mode files
-    curl -fsSL "$base_url/src/modes/multi-source-analysis-mode.mdc" -o .cursor/rules/modes/multi-source-analysis-mode.mdc
-    curl -fsSL "$base_url/src/modes/target-analysis-mode.mdc" -o .cursor/rules/modes/target-analysis-mode.mdc
-    curl -fsSL "$base_url/src/modes/architecture-planning-mode.mdc" -o .cursor/rules/modes/architecture-planning-mode.mdc
-    curl -fsSL "$base_url/src/modes/developing-mode.mdc" -o .cursor/rules/modes/developing-mode.mdc
-    curl -fsSL "$base_url/src/modes/integration-testing-mode.mdc" -o .cursor/rules/modes/integration-testing-mode.mdc
-    curl -fsSL "$base_url/src/modes/content-sync-mode.mdc" -o .cursor/rules/modes/content-sync-mode.mdc
-    curl -fsSL "$base_url/src/modes/brainstorming-mode.mdc" -o .cursor/rules/modes/brainstorming-mode.mdc
-    curl -fsSL "$base_url/src/modes/planning-agent.mdc" -o .cursor/rules/modes/planning-agent.mdc
-    curl -fsSL "$base_url/src/modes/documenting-mode.mdc" -o .cursor/rules/modes/documenting-mode.mdc
-    curl -fsSL "$base_url/src/modes/initializing-mode.mdc" -o .cursor/rules/modes/initializing-mode.mdc
+    declare -A utility_files=(
+        ["safe-code-generation.mdc"]="Safe code generation utility"
+        ["enforcer.mdc"]="Enforcer utility"
+    )
     
-    # Utility files
-    curl -fsSL "$base_url/src/utilities/safe-code-generation.mdc" -o .cursor/rules/utilities/safe-code-generation.mdc
-    curl -fsSL "$base_url/src/utilities/enforcer.mdc" -o .cursor/rules/utilities/enforcer.mdc
+    declare -A template_files=(
+        ["target-analysis-template.md"]="Target analysis template"
+        ["scraping-blueprint-template.yaml"]="Scraping blueprint template"
+        ["blueprint-template.yaml"]="Blueprint template"
+        ["task-template.md"]="Task template"
+        ["task-index-template.json"]="Task index template"
+        ["task-index-feature-template.json"]="Task index feature template"
+    )
     
-    # Template files
-    curl -fsSL "$base_url/src/templates/target-analysis-template.md" -o .cursor/rules/templates/target-analysis-template.md
-    curl -fsSL "$base_url/src/templates/scraping-blueprint-template.yaml" -o .cursor/rules/templates/scraping-blueprint-template.yaml
-    curl -fsSL "$base_url/src/templates/blueprint-template.yaml" -o .cursor/rules/templates/blueprint-template.yaml
-    curl -fsSL "$base_url/src/templates/task-template.md" -o .cursor/rules/templates/task-template.md
-    curl -fsSL "$base_url/src/templates/task-index-template.json" -o .cursor/rules/templates/task-index-template.json
-    curl -fsSL "$base_url/src/templates/task-index-feature-template.json" -o .cursor/rules/templates/task-index-feature-template.json
+    declare -A doc_files=(
+        ["USER_RULES_TEMPLATE.md"]="User rules template"
+        ["MULTI_SOURCE_WORKFLOW_EXAMPLE.md"]="Multi-source workflow example"
+        ["WEBSITE_CLONE_WORKFLOW_EXAMPLE.md"]="Website clone workflow example"
+        ["QUICK_INSTALL_GUIDE.md"]="Quick install guide"
+    )
     
-    # Documentation files
-    curl -fsSL "$base_url/USER_RULES_TEMPLATE.md" -o USER_RULES_TEMPLATE.md
-    curl -fsSL "$base_url/MULTI_SOURCE_WORKFLOW_EXAMPLE.md" -o MULTI_SOURCE_WORKFLOW_EXAMPLE.md
-    curl -fsSL "$base_url/WEBSITE_CLONE_WORKFLOW_EXAMPLE.md" -o WEBSITE_CLONE_WORKFLOW_EXAMPLE.md
+    # Download core files
+    for file in "${!core_files[@]}"; do
+        download_file "$GITHUB_BASE_URL/src/core/$file" ".cursor/rules/core/$file" "${core_files[$file]}"
+    done
+    
+    # Download mode files
+    for file in "${!mode_files[@]}"; do
+        download_file "$GITHUB_BASE_URL/src/modes/$file" ".cursor/rules/modes/$file" "${mode_files[$file]}"
+    done
+    
+    # Download utility files
+    for file in "${!utility_files[@]}"; do
+        download_file "$GITHUB_BASE_URL/src/utilities/$file" ".cursor/rules/utilities/$file" "${utility_files[$file]}"
+    done
+    
+    # Download template files
+    for file in "${!template_files[@]}"; do
+        download_file "$GITHUB_BASE_URL/src/templates/$file" ".cursor/rules/templates/$file" "${template_files[$file]}"
+    done
+    
+    # Download documentation files to current directory
+    for file in "${!doc_files[@]}"; do
+        download_file "$GITHUB_BASE_URL/$file" "$file" "${doc_files[$file]}"
+    done
     
     print_success "Cursor Rules Agent files downloaded!"
 }
@@ -211,6 +320,32 @@ EOF
     print_success "Project configuration created!"
 }
 
+# Create environment template
+create_env_template() {
+    if [ ! -f ".env.example" ]; then
+        print_status "Creating environment template..."
+        cat > .env.example << 'EOF'
+# GitHub Authentication (for private repositories)
+GITHUB_TOKEN=your_github_token_here
+
+# Database Configuration (for website clones)
+MONGODB_URI=mongodb://localhost:27017/your_database
+REDIS_URL=redis://localhost:6379
+
+# Storage Configuration
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_S3_BUCKET=your_s3_bucket
+
+# Application Configuration
+NODE_ENV=development
+PORT=3000
+API_BASE_URL=http://localhost:3000
+EOF
+        print_success "Environment template created!"
+    fi
+}
+
 # Setup gitignore if needed
 setup_gitignore() {
     if [ ! -f .gitignore ]; then
@@ -221,18 +356,18 @@ setup_gitignore() {
 docs/tasks/active/
 *.log
 
-# Dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
 # Environment variables
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # OS generated files
 .DS_Store
@@ -260,11 +395,25 @@ print_next_steps() {
     echo "   ✅ Configuration files"
     echo "   ✅ Templates and examples"
     echo ""
+    
+    if [ -n "$GITHUB_TOKEN" ]; then
+        echo -e "${BLUE}🔐 Authentication:${NC}"
+        echo "   ✅ GitHub token configured for private repository access"
+        echo ""
+    fi
+    
     echo -e "${BLUE}🚀 Next Steps:${NC}"
     echo ""
     echo -e "${YELLOW}1.${NC} Open Cursor IDE in this directory"
     echo -e "${YELLOW}2.${NC} Copy USER_RULES_TEMPLATE.md content to Cursor Settings > Rules"
-    echo -e "${YELLOW}3.${NC} Start using the agent with one of these commands:"
+    
+    if [ ! -f ".env" ] && [ -f ".env.example" ]; then
+        echo -e "${YELLOW}3.${NC} Copy .env.example to .env and configure your environment variables"
+        echo -e "${YELLOW}4.${NC} Start using the agent with one of these commands:"
+    else
+        echo -e "${YELLOW}3.${NC} Start using the agent with one of these commands:"
+    fi
+    
     echo ""
     
     case $PROJECT_TYPE in
@@ -284,6 +433,7 @@ print_next_steps() {
     echo "   📖 MULTI_SOURCE_WORKFLOW_EXAMPLE.md - Real-world example"
     echo "   🌐 WEBSITE_CLONE_WORKFLOW_EXAMPLE.md - Clone methodology"
     echo "   ⚙️ USER_RULES_TEMPLATE.md - Customization guide"
+    echo "   🚀 QUICK_INSTALL_GUIDE.md - Installation options"
     echo ""
     echo -e "${BLUE}🤝 Support:${NC}"
     echo "   🐛 Issues: https://github.com/vietnguyen91/cursor-rules/issues"
@@ -297,11 +447,13 @@ print_next_steps() {
 main() {
     print_header
     check_prerequisites
+    setup_github_auth
     detect_project_type
     create_directory_structure
     download_cursor_rules
     create_task_index
     create_project_config
+    create_env_template
     setup_gitignore
     print_next_steps
 }

@@ -3,3 +3,733 @@ description:
 globs:
 alwaysApply: false
 ---
+# 🏗️ Architecture Planning Mode (Website Clone Specialized)
+Comprehensive architecture design for website cloning with advanced scraping strategies and optimal data modeling.
+
+## 🎯 Activation
+- Target analysis completed and approved
+- Blueprint gate_status < 1 (needs architecture approval)
+- User requests "design architecture for {feature}"
+- Transition from Target Analysis Mode
+
+## 🧰 MCP Tools Integration
+
+### Available Tools for Architecture Planning:
+1. **Context7 MCP** - Validate technology choices, get API documentation, best practices
+2. **Web Search** - Research architectural patterns, scraping best practices, performance optimization
+3. **Sequential Thinking** - Systematic architecture design and component dependency analysis
+4. **Interactive MCP** - Confirm architectural decisions, validate design choices with stakeholders
+
+## 🏛️ Comprehensive Architecture Design Workflow
+
+### Phase 1: Multi-Source Scraping Architecture Design
+
+#### 1.1 Multi-Source Scraping Strategy Definition
+**Based on Multi-Source Analysis**, determine optimal approach:
+
+```yaml
+multi_source_strategy:
+  approach: # multi_source_fusion | source_prioritization | hybrid_aggregation
+  complexity_level: # simple | moderate | complex | enterprise
+  source_count: # number of sources to integrate
+  
+  data_consistency_requirements:
+    consistency_level: # eventual | strong | real_time
+    conflict_tolerance: # low | medium | high
+    data_freshness: # <1hour | <4hours | <24hours
+  
+  api_integration:
+    availability: # available | limited | none
+    rate_limits: # requests_per_minute
+    authentication: # required | optional | none
+    endpoints: # list of available endpoints
+  
+  scraping_requirements:
+    pages_to_scrape: # estimated count
+    update_frequency: # daily | hourly | real_time
+    data_freshness: # critical | moderate | flexible
+    concurrent_requests: # recommended number
+```
+
+#### 1.2 Multi-Source Data Fusion Architecture
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Load Balancer                        │
+├─────────────────────────────────────────────────────────┤
+│                Source Orchestrator                      │
+├─────────────────────────────────────────────────────────┤
+│ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────────────┐│
+│ │Source A │ │Source B │ │Source C │ │   API Sources   ││
+│ │Scraper  │ │Scraper  │ │Scraper  │ │   (IMDB, etc.)  ││
+│ └─────────┘ └─────────┘ └─────────┘ └─────────────────┘│
+├─────────────────────────────────────────────────────────┤
+│                 Data Fusion Layer                       │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────────┐  │
+│  │   Content   │ │  Conflict   │ │    Quality      │  │
+│  │Normalization│ │ Resolution  │ │  Assessment     │  │
+│  └─────────────┘ └─────────────┘ └─────────────────┘  │
+├─────────────────────────────────────────────────────────┤
+│               Master Data Repository                    │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────────┐  │
+│  │  Canonical  │ │   Source    │ │    Conflict     │  │
+│  │   Records   │ │  Tracking   │ │    History      │  │
+│  └─────────────┘ └─────────────┘ └─────────────────┘  │
+├─────────────────────────────────────────────────────────┤
+│              Real-time Consistency Engine               │
+└─────────────────────────────────────────────────────────┘
+```
+
+#### 1.3 Error Handling & Resilience Design
+```javascript
+// Resilience Strategy
+const resilienceStrategy = {
+  retry_mechanisms: {
+    exponential_backoff: true,
+    max_retries: 3,
+    timeout_escalation: [5, 15, 30] // seconds
+  },
+  
+  fallback_strategies: {
+    cache_fallback: true,
+    alternative_sources: ['source1', 'source2'],
+    graceful_degradation: true
+  },
+  
+  monitoring: {
+    health_checks: true,
+    alert_thresholds: {
+      failure_rate: 0.1, // 10%
+      response_time: 5000 // 5 seconds
+    }
+  }
+}
+```
+
+#### 1.3 Data Consistency Architecture
+```javascript
+// Multi-Source Data Fusion Engine
+const dataFusionEngine = {
+  source_management: {
+    source_registry: {
+      rophim_me: {
+        priority: 1,
+        reliability_score: 0.95,
+        update_frequency: "daily",
+        data_types: ["movies", "episodes", "categories"]
+      },
+      
+      phimmoi_sale: {
+        priority: 2,
+        reliability_score: 0.87,
+        update_frequency: "hourly",
+        data_types: ["movies", "episodes", "video_sources"]
+      },
+      
+      imdb_api: {
+        priority: 3,
+        reliability_score: 0.99,
+        update_frequency: "weekly",
+        data_types: ["metadata", "ratings", "cast"]
+      }
+    }
+  },
+  
+  conflict_resolution: {
+    rules_engine: {
+      title_conflicts: "prefer_canonical_form",
+      description_conflicts: "merge_unique_content",
+      rating_conflicts: "weighted_average",
+      category_conflicts: "union_with_normalization"
+    },
+    
+    fallback_strategy: "manual_review_queue",
+    confidence_threshold: 0.8
+  },
+  
+  consistency_monitoring: {
+    real_time_validation: true,
+    cross_reference_checks: true,
+    anomaly_detection: true,
+    quality_scoring: "continuous"
+  }
+}
+```
+
+### Phase 2: Data Architecture & Modeling
+
+#### 2.1 Multi-Source Entity Relationship Design
+**Based on Target Analysis content mapping**:
+
+```mermaid
+erDiagram
+    MASTER_CONTENT ||--o{ SOURCE_CONTENT : aggregates
+    SOURCE_CONTENT }o--|| DATA_SOURCE : originates_from
+    MASTER_CONTENT ||--o{ CONFLICT_LOG : generates
+    MASTER_CONTENT ||--o{ QUALITY_SCORE : has
+    
+    MASTER_CONTENT {
+        string id PK
+        string canonical_title
+        array alternative_titles
+        text merged_description
+        number year
+        float confidence_score
+        string primary_source
+        json source_mapping
+        datetime last_updated
+    }
+    
+    SOURCE_CONTENT {
+        string id PK
+        string master_id FK
+        string source_id FK
+        string original_title
+        text original_description
+        json raw_data
+        float quality_score
+        datetime scraped_at
+        string status
+    }
+    
+    DATA_SOURCE {
+        string id PK
+        string name
+        string base_url
+        float reliability_score
+        string update_frequency
+        json scraping_config
+        boolean active
+        datetime last_health_check
+    }
+    
+    CONFLICT_LOG {
+        string id PK
+        string master_content_id FK
+        string field_name
+        json conflicting_values
+        string resolution_strategy
+        string resolved_value
+        datetime resolved_at
+    }
+    
+    QUALITY_SCORE {
+        string id PK
+        string content_id FK
+        float completeness_score
+        float accuracy_score
+        float freshness_score
+        float overall_score
+        datetime calculated_at
+    }
+```
+
+#### 2.2 Database Schema Optimization
+
+**MongoDB Multi-Source Schema Design** (for rophim-like projects):
+```javascript
+// Master Movies Collection (Canonical Records)
+const masterMovieSchema = {
+  _id: ObjectId,
+  canonical_id: String, // Unique canonical identifier
+  slug: String, // Indexed for URL routing
+  
+  // Resolved Content (from multi-source fusion)
+  canonical_title: String, // Full-text search indexed
+  alternative_titles: [String], // All title variations
+  merged_description: String, // Combined from multiple sources
+  
+  // Metadata (with source tracking)
+  year: Number,
+  duration: Number,
+  quality: String,
+  status: String,
+  
+  // Categorization (normalized across sources)
+  categories: [ObjectId], 
+  topics: [ObjectId],
+  tags: [String],
+  
+  // Multi-Source Media Resources
+  media_resources: {
+    posters: [{
+      source: String, // "rophim_me", "phimmoi_sale"
+      url: String,
+      quality: String,
+      is_primary: Boolean
+    }],
+    trailers: [{
+      source: String,
+      url: String,
+      type: String // "youtube", "direct"
+    }]
+  },
+  
+  // Multi-Source Episode Data
+  episodes: [{
+    canonical_episode_id: String,
+    episode_number: Number,
+    title: String,
+    video_sources: [{
+      source: String,
+      quality: String,
+      url: String,
+      server: String,
+      type: String,
+      reliability_score: Number
+    }]
+  }],
+  
+  // Source Tracking & Data Lineage
+  source_tracking: {
+    primary_source: String, // Best source for this content
+    contributing_sources: [String], // All sources that provided data
+    source_weights: Object, // { "rophim_me": 0.8, "phimmoi_sale": 0.6 }
+    last_sync_per_source: Object, // { "rophim_me": Date, "phimmoi_sale": Date }
+    conflict_count: Number,
+    data_confidence: Number // 0-1 overall confidence score
+  },
+  
+  // Performance Optimization
+  view_count: Number, // For popularity sorting
+  search_terms: [String], // Pre-computed search keywords
+  
+  // Timestamps
+  created_at: Date,
+  updated_at: Date,
+  
+  // Enhanced Indexing Strategy
+  indexes: {
+    canonical_id: 1, // Unique canonical identifier
+    slug: 1, // Unique index for routing
+    canonical_title: "text", // Full-text search
+    alternative_titles: "text", // Search all title variations
+    "categories": 1, // Category filtering
+    "source_tracking.primary_source": 1, // Source filtering
+    "source_tracking.last_sync_per_source": -1, // Recent updates
+    "year": -1, // Year filtering
+    "view_count": -1, // Popularity sorting
+    "source_tracking.data_confidence": -1 // Quality sorting
+  }
+}
+
+// Source Content Collection (Raw data from each source)
+const sourceContentSchema = {
+  _id: ObjectId,
+  canonical_id: String, // Links to master record
+  source_name: String, // "rophim_me", "phimmoi_sale", etc.
+  
+  // Original scraped data (preserved as-is)
+  original_data: {
+    title: String,
+    description: String,
+    poster_url: String,
+    categories: [String],
+    year: Number,
+    episodes: [Object]
+  },
+  
+  // Quality metrics for this source
+  quality_metrics: {
+    completeness_score: Number, // 0-1
+    accuracy_score: Number, // 0-1  
+    freshness_score: Number, // 0-1
+    overall_score: Number // Calculated
+  },
+  
+  // Scraping metadata
+  scraping_metadata: {
+    source_url: String,
+    scraped_at: Date,
+    scraper_version: String,
+    extraction_rules: Object,
+    http_status: Number,
+    response_time: Number
+  },
+  
+  // Processing status
+  processing_status: {
+    status: String, // "raw", "processed", "merged", "conflict"
+    processed_at: Date,
+    conflicts_detected: [String], // Field names with conflicts
+    resolution_status: String // "auto", "manual", "pending"
+  }
+}
+
+// Conflict Resolution Collection
+const conflictResolutionSchema = {
+  _id: ObjectId,
+  canonical_id: String, // Master record ID
+  field_name: String, // Which field has conflict
+  
+  // Conflicting values from different sources
+  conflicting_values: [{
+    source: String,
+    value: Object,
+    confidence: Number,
+    timestamp: Date
+  }],
+  
+  // Resolution information
+  resolution: {
+    strategy: String, // "prefer_reliable", "merge", "manual"
+    resolved_value: Object,
+    confidence: Number,
+    resolved_by: String, // "auto" or user_id
+    resolved_at: Date,
+    reasoning: String
+  },
+  
+  // Conflict metadata
+  conflict_metadata: {
+    severity: String, // "low", "medium", "high", "critical"
+    impact: String, // "data_quality", "user_experience", "business"
+    auto_resolvable: Boolean,
+    requires_review: Boolean
+  }
+}
+```
+
+**PostgreSQL Alternative** (for complex relationships):
+```sql
+-- Normalized approach for complex queries
+CREATE TABLE websites (
+    id UUID PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    base_url TEXT NOT NULL,
+    scraping_config JSONB,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE content_items (
+    id UUID PRIMARY KEY,
+    website_id UUID REFERENCES websites(id),
+    title TEXT NOT NULL,
+    slug VARCHAR(255) UNIQUE,
+    content_type VARCHAR(50),
+    metadata JSONB,
+    status VARCHAR(20) DEFAULT 'active',
+    scraped_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Performance indexes
+CREATE INDEX idx_content_slug ON content_items(slug);
+CREATE INDEX idx_content_scraped ON content_items(scraped_at DESC);
+CREATE INDEX idx_content_metadata ON content_items USING GIN(metadata);
+```
+
+#### 2.3 Caching Layer Architecture
+```
+┌─────────────────────────────────────┐
+│            CDN Layer                │
+│        (Static Assets)              │
+├─────────────────────────────────────┤
+│         Redis Cache                 │
+│    (Hot Data + Sessions)            │
+├─────────────────────────────────────┤
+│      Application Cache              │
+│     (In-Memory LRU)                 │
+├─────────────────────────────────────┤
+│       Database Layer               │
+│    (Persistent Storage)             │
+└─────────────────────────────────────┘
+```
+
+**Cache Strategy**:
+```javascript
+const cacheStrategy = {
+  levels: {
+    l1_memory: {
+      type: 'LRU',
+      max_size: '500MB',
+      ttl: 300, // 5 minutes
+      use_cases: ['hot_movies', 'categories', 'user_sessions']
+    },
+    
+    l2_redis: {
+      type: 'Redis',
+      max_size: '2GB',
+      ttl: 3600, // 1 hour
+      use_cases: ['search_results', 'aggregated_data', 'api_responses']
+    },
+    
+    l3_cdn: {
+      type: 'CloudFlare',
+      ttl: 86400, // 24 hours
+      use_cases: ['static_assets', 'images', 'videos']
+    }
+  }
+}
+```
+
+### Phase 3: System Architecture Design
+
+#### 3.1 Microservices Architecture
+```
+┌─────────────────────────────────────┐
+│          API Gateway                │
+│       (Rate Limiting +              │
+│        Authentication)              │
+└─────────────┬───────────────────────┘
+              │
+    ┌─────────┴─────────┐
+    │                   │
+┌───▼────┐         ┌────▼───┐
+│Content │         │ User   │
+│Service │         │Service │
+└───┬────┘         └────┬───┘
+    │                   │
+┌───▼────┐         ┌────▼───┐
+│Scraper │         │ Auth   │
+│Service │         │Service │
+└───┬────┘         └────────┘
+    │
+┌───▼────┐
+│Database│
+│Service │
+└────────┘
+```
+
+#### 3.2 Frontend Architecture (Nuxt 3 Based)
+```
+src/
+├── components/
+│   ├── base/           # Reusable base components
+│   ├── movie/          # Movie-specific components
+│   ├── player/         # Video player components
+│   └── layout/         # Layout components
+├── composables/
+│   ├── useMovies.ts    # Movie data management
+│   ├── usePlayer.ts    # Video player logic
+│   └── useSearch.ts    # Search functionality
+├── pages/
+│   ├── index.vue       # Homepage
+│   ├── movies/         # Movie pages
+│   └── watch/          # Video player pages
+├── server/
+│   ├── api/            # API routes
+│   ├── models/         # Data models
+│   └── utils/          # Server utilities
+└── utils/
+    ├── scraping.ts     # Scraping utilities
+    └── media.ts        # Media processing
+```
+
+#### 3.3 API Design
+```yaml
+# RESTful API Design
+api_endpoints:
+  content:
+    - GET /api/movies              # List movies with pagination
+    - GET /api/movies/{slug}       # Get movie details
+    - GET /api/movies/{slug}/episodes # Get episodes
+    - GET /api/search              # Search content
+    - GET /api/categories          # List categories
+    
+  scraping:
+    - POST /api/scraper/trigger    # Manual scraping trigger
+    - GET /api/scraper/status      # Scraping status
+    - GET /api/scraper/logs        # Scraping logs
+    
+  admin:
+    - POST /api/admin/sync         # Force content sync
+    - GET /api/admin/stats         # System statistics
+```
+
+### Phase 4: Performance & Scalability Design
+
+#### 4.1 Database Optimization Strategy
+```javascript
+const optimizationStrategy = {
+  indexing: {
+    primary_indexes: ['slug', 'id'],
+    search_indexes: ['title', 'tags'],
+    filter_indexes: ['category', 'year', 'status'],
+    performance_indexes: ['view_count', 'updated_at']
+  },
+  
+  partitioning: {
+    strategy: 'date_based', // Monthly partitions
+    retention: '2_years',
+    archive_strategy: 'cold_storage'
+  },
+  
+  replication: {
+    read_replicas: 2,
+    write_master: 1,
+    load_balancing: 'round_robin'
+  }
+}
+```
+
+#### 4.2 Scalability Planning
+```yaml
+scalability_tiers:
+  tier_1: # 0-10K users
+    infrastructure:
+      app_servers: 1
+      database: 'single_instance'
+      cache: 'redis_single'
+      cdn: 'basic'
+    
+  tier_2: # 10K-100K users
+    infrastructure:
+      app_servers: 3
+      database: 'master_slave'
+      cache: 'redis_cluster'
+      cdn: 'premium'
+    
+  tier_3: # 100K+ users
+    infrastructure:
+      app_servers: 'auto_scaling'
+      database: 'sharded_cluster'
+      cache: 'distributed_cache'
+      cdn: 'enterprise'
+```
+
+## 📋 Architecture Blueprint Template
+
+```yaml
+# Website Clone Architecture Blueprint
+metadata:
+  project: "{project_name}"
+  target_website: "{target_url}"
+  analysis_date: "{date}"
+  architect: "{architect_name}"
+
+scraping_architecture:
+  strategy:
+    type: "{api_first|scraping_primary|hybrid}"
+    complexity: "{simple|moderate|complex}"
+    
+  components:
+    orchestrator:
+      technology: "{node_js|python|golang}"
+      scaling: "{single|cluster|distributed}"
+      
+    scrapers:
+      count: {number}
+      technology: "{puppeteer|playwright|scrapy}"
+      concurrent_limit: {number}
+      
+    data_pipeline:
+      processing: "{real_time|batch|hybrid}"
+      validation: "{strict|moderate|flexible}"
+      
+data_architecture:
+  database:
+    primary: "{mongodb|postgresql|mysql}"
+    caching: "{redis|memcached|in_memory}"
+    
+  schema_design:
+    approach: "{normalized|denormalized|hybrid}"
+    entities: {list_of_entities}
+    relationships: {list_of_relationships}
+    
+  performance:
+    indexing_strategy: "{comprehensive|selective|minimal}"
+    partitioning: "{enabled|disabled}"
+    replication: "{enabled|disabled}"
+
+system_architecture:
+  pattern: "{monolith|microservices|modular_monolith}"
+  
+  frontend:
+    framework: "{nuxt|next|vue|react}"
+    rendering: "{ssr|spa|static}"
+    
+  backend:
+    api_pattern: "{rest|graphql|hybrid}"
+    authentication: "{jwt|session|oauth}"
+    
+  infrastructure:
+    hosting: "{vps|cloud|serverless}"
+    cdn: "{cloudflare|aws|azure}"
+    monitoring: "{enabled|disabled}"
+
+quality_gates:
+  architecture_review:
+    - [ ] Scalability requirements met
+    - [ ] Performance targets defined
+    - [ ] Security considerations addressed
+    - [ ] Legal compliance verified
+    
+  technical_validation:
+    - [ ] Technology stack approved
+    - [ ] Dependencies identified
+    - [ ] Integration points defined
+    - [ ] Deployment strategy planned
+
+risks_and_mitigations:
+  technical_risks:
+    - risk: "{risk_description}"
+      probability: "{low|medium|high}"
+      impact: "{low|medium|high}"
+      mitigation: "{mitigation_strategy}"
+      
+  operational_risks:
+    - risk: "{risk_description}"
+      probability: "{low|medium|high}"
+      impact: "{low|medium|high}"
+      mitigation: "{mitigation_strategy}"
+
+implementation_plan:
+  phases:
+    phase_1:
+      name: "Core Infrastructure"
+      duration: "{weeks}"
+      deliverables: {list}
+      
+    phase_2:
+      name: "Scraping Implementation"
+      duration: "{weeks}"
+      deliverables: {list}
+      
+    phase_3:
+      name: "Frontend Development"
+      duration: "{weeks}"
+      deliverables: {list}
+
+approval:
+  gate_status: 0 # 0=draft, 1=approved, 2=implemented
+  reviewed_by: "{reviewer}"
+  approved_date: "{date}"
+  implementation_ready: false
+```
+
+## 🚦 Quality Gates
+
+### Architecture Completion Criteria:
+- [ ] Scraping strategy fully defined and validated
+- [ ] Data models designed and optimized
+- [ ] System architecture components specified
+- [ ] Performance requirements addressed
+- [ ] Scalability plan created
+- [ ] Security considerations implemented
+- [ ] Legal compliance maintained
+
+### Ready for Development:
+- [ ] Blueprint approved (gate_status: 1)
+- [ ] Technology stack finalized
+- [ ] Development environment defined
+- [ ] Task breakdown completed
+- [ ] Resource allocation confirmed
+
+## 🔄 Transition Rules
+- **→ Developing Mode**: When blueprint approved + tasks defined
+- **→ Target Analysis**: If requirements change significantly
+- **← Architecture Review**: If stakeholder feedback requires changes
+
+## 📊 Success Metrics
+- Comprehensive architecture documented
+- Technical feasibility confirmed
+- Performance targets defined
+- Implementation roadmap created
+- Stakeholder approval obtained
+
+## 🚨 Error Handling
+- **Technology Conflicts**: Research alternatives, get stakeholder input
+- **Performance Concerns**: Redesign bottlenecks, optimize architecture
+- **Scalability Issues**: Revise infrastructure plan, consider cloud solutions
+- **Compliance Problems**: Halt development, require legal review

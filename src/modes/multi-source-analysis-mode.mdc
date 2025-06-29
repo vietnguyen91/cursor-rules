@@ -3,3 +3,422 @@ description:
 globs:
 alwaysApply: false
 ---
+# 🔍 Multi-Source Analysis Mode
+Comprehensive analysis of multiple data sources for consistent website cloning with intelligent data reconciliation.
+
+## 🎯 Activation
+- User requests to analyze multiple sources: "analyze all sources", "compare sources"
+- Target analysis reveals multiple data sources available
+- User specifies multiple URLs/sources for cloning
+- Keyword triggers: "multi-source", "compare sources", "aggregate data"
+
+## 🧰 MCP Tools Integration
+
+### Available Tools for Multi-Source Analysis:
+1. **Web Search** - Research source reputation, reliability, update patterns
+2. **Playwright** - Automated parallel source analysis, structure comparison
+3. **Sequential Thinking** - Systematic cross-source comparison methodology
+4. **Interactive MCP** - Source prioritization confirmation, conflict resolution strategies
+
+## 📋 Multi-Source Analysis Framework
+
+### Phase 1: Source Discovery & Cataloging
+
+#### 1.1 Source Identification & Classification
+```yaml
+source_discovery:
+  primary_sources:
+    - name: "rophim.me"
+      type: "original_target"
+      reliability: "high"
+      update_frequency: "daily"
+      content_coverage: "comprehensive"
+      
+    - name: "phimmoi.sale"
+      type: "supplementary"
+      reliability: "medium"
+      update_frequency: "hourly"
+      content_coverage: "partial_overlap"
+      
+  secondary_sources:
+    - name: "api_endpoints"
+      type: "structured_data"
+      reliability: "high"
+      format: "json"
+      rate_limits: "1000_requests_hour"
+      
+  metadata_sources:
+    - name: "imdb_api"
+      type: "enrichment"
+      purpose: "metadata_enhancement"
+      cost: "paid_tier"
+```
+
+#### 1.2 Content Type Mapping
+```javascript
+// Cross-source content mapping
+const contentMapping = {
+  movie_entity: {
+    rophim_me: {
+      title_selector: ".movie-title h1",
+      description_selector: ".movie-description",
+      poster_selector: ".movie-poster img",
+      categories_selector: ".movie-genres a"
+    },
+    
+    phimmoi_sale: {
+      title_selector: "h1.entry-title",
+      description_selector: ".entry-content",
+      poster_selector: ".movie-thumb img",
+      categories_selector: ".movie-category span"
+    },
+    
+    common_schema: {
+      title: "string",
+      description: "text",
+      poster_url: "url",
+      categories: "array<string>",
+      year: "number",
+      imdb_rating: "float"
+    }
+  }
+}
+```
+
+### Phase 2: Data Quality Assessment
+
+#### 2.1 Source Quality Scoring
+```yaml
+quality_metrics:
+  completeness:
+    calculation: "fields_filled / total_required_fields"
+    weights:
+      title: 1.0
+      description: 0.8
+      poster: 0.6
+      categories: 0.4
+      
+  accuracy:
+    validation_rules:
+      - "title_reasonable_length"
+      - "description_not_empty"
+      - "poster_url_accessible"
+      - "year_in_valid_range"
+      
+  freshness:
+    last_updated_detection: true
+    staleness_threshold: "7_days"
+    penalty_factor: 0.1
+    
+  reliability:
+    uptime_tracking: true
+    error_rate_monitoring: true
+    response_time_tracking: true
+```
+
+#### 2.2 Content Overlap Analysis
+```javascript
+// Content overlap detection
+const overlapAnalysis = {
+  exact_matches: {
+    detection_method: "title_normalization + year",
+    similarity_threshold: 0.95,
+    confidence: "high"
+  },
+  
+  fuzzy_matches: {
+    detection_method: "levenshtein_distance",
+    similarity_threshold: 0.85,
+    confidence: "medium"
+  },
+  
+  metadata_correlation: {
+    fields: ["duration", "director", "cast"],
+    correlation_threshold: 0.8,
+    confidence: "low"
+  }
+}
+```
+
+### Phase 3: Conflict Detection & Analysis
+
+#### 3.1 Data Conflict Identification
+```yaml
+conflict_types:
+  field_conflicts:
+    - type: "title_variations"
+      examples: ["Movie Title", "Movie Title (2023)", "Movie Title HD"]
+      resolution_strategy: "prefer_canonical_form"
+      
+    - type: "description_differences" 
+      examples: ["short_summary", "detailed_plot", "marketing_copy"]
+      resolution_strategy: "prefer_longest_content"
+      
+    - type: "metadata_mismatches"
+      examples: ["year_differences", "rating_conflicts", "duration_variations"]
+      resolution_strategy: "prefer_most_reliable_source"
+      
+  structural_conflicts:
+    - type: "category_system_differences"
+      source_a: ["Action", "Drama"]
+      source_b: ["Hành Động", "Tâm Lý"]
+      resolution_strategy: "create_mapping_table"
+      
+    - type: "episode_numbering_schemes"
+      source_a: "sequential_numbering"
+      source_b: "season_episode_format"
+      resolution_strategy: "normalize_to_common_format"
+```
+
+#### 3.2 Relationship Integrity Analysis
+```mermaid
+erDiagram
+    SOURCE_A_MOVIE ||--o{ SOURCE_A_EPISODE : has
+    SOURCE_B_MOVIE ||--o{ SOURCE_B_EPISODE : has
+    MASTER_MOVIE ||--o{ MASTER_EPISODE : contains
+    MASTER_MOVIE ||--|| SOURCE_A_MOVIE : maps_to
+    MASTER_MOVIE ||--|| SOURCE_B_MOVIE : maps_to
+    
+    CONFLICT_LOG ||--o{ RESOLUTION_RULE : applies
+    MASTER_MOVIE ||--o{ CONFLICT_LOG : generates
+```
+
+### Phase 4: Data Fusion Strategy Design
+
+#### 4.1 Source Prioritization Matrix
+```yaml
+prioritization_rules:
+  content_type_priorities:
+    movie_metadata:
+      primary: "rophim.me"
+      fallback: ["phimmoi.sale", "imdb_api"]
+      
+    episode_data:
+      primary: "phimmoi.sale"
+      fallback: ["rophim.me"]
+      
+    video_sources:
+      primary: "multiple_sources"
+      strategy: "best_available_quality"
+      
+  quality_based_priorities:
+    completeness_weight: 0.4
+    accuracy_weight: 0.3
+    freshness_weight: 0.2
+    reliability_weight: 0.1
+    
+  dynamic_prioritization:
+    enabled: true
+    reevaluation_frequency: "weekly"
+    performance_based_adjustment: true
+```
+
+#### 4.2 Conflict Resolution Rules Engine
+```javascript
+// Advanced conflict resolution
+class ConflictResolutionEngine {
+  resolveFieldConflict(field, values, sources) {
+    const rules = {
+      title: this.resolveTitleConflict,
+      description: this.resolveDescriptionConflict,
+      year: this.resolveYearConflict,
+      rating: this.resolveRatingConflict,
+      categories: this.resolveCategoriesConflict
+    };
+    
+    return rules[field]?.(values, sources) || this.defaultResolution(values, sources);
+  }
+  
+  resolveTitleConflict(values, sources) {
+    // Priority: Official title > Canonical form > Most reliable source
+    const officialTitles = values.filter(v => v.isOfficial);
+    if (officialTitles.length > 0) return officialTitles[0];
+    
+    const canonicalForms = values.filter(v => v.isCanonical);
+    if (canonicalForms.length > 0) return canonicalForms[0];
+    
+    return this.selectBySourceReliability(values, sources);
+  }
+  
+  resolveDescriptionConflict(values, sources) {
+    // Strategy: Combine unique information from all sources
+    const uniqueContent = this.extractUniqueContent(values);
+    return this.mergeDescriptions(uniqueContent);
+  }
+}
+```
+
+### Phase 5: Master Data Schema Design
+
+#### 5.1 Unified Data Model
+```yaml
+master_schema:
+  movie_entity:
+    core_fields:
+      - id: "uuid (generated)"
+      - canonical_title: "string (resolved)"
+      - alternative_titles: "array<string>"
+      - description: "text (merged)"
+      - year: "number (validated)"
+      - duration: "number (minutes)"
+      
+    metadata_fields:
+      - categories: "array<normalized_category>"
+      - ratings: "object<source_name: rating>"
+      - posters: "object<source_name: url>"
+      - trailers: "array<video_url>"
+      
+    source_tracking:
+      - primary_source: "string"
+      - contributing_sources: "array<source_name>"
+      - last_sync_per_source: "object<source_name: timestamp>"
+      - conflict_history: "array<conflict_record>"
+      
+    quality_metrics:
+      - completeness_score: "float (0-1)"
+      - confidence_score: "float (0-1)"
+      - freshness_score: "float (0-1)"
+      - validation_status: "enum (verified|pending|failed)"
+```
+
+#### 5.2 Data Lineage Tracking
+```javascript
+// Data lineage and audit trail
+const dataLineage = {
+  field_provenance: {
+    title: {
+      source: "rophim.me",
+      extraction_date: "2025-01-16T10:30:00Z",
+      confidence: 0.95,
+      validation_rules_passed: ["length_check", "format_validation"]
+    },
+    
+    description: {
+      source: "merged",
+      contributing_sources: ["rophim.me", "phimmoi.sale"],
+      merge_strategy: "content_combination",
+      confidence: 0.87
+    }
+  },
+  
+  change_history: [{
+    timestamp: "2025-01-16T14:15:00Z",
+    field: "rating",
+    old_value: 8.2,
+    new_value: 8.5,
+    source: "imdb_api",
+    reason: "more_recent_data"
+  }]
+}
+```
+
+## 📊 Multi-Source Analysis Report Template
+
+```markdown
+# Multi-Source Analysis Report: {{PROJECT_NAME}}
+
+## Executive Summary
+- **Total Sources Analyzed:** {{TOTAL_SOURCES}}
+- **Primary Source:** {{PRIMARY_SOURCE}}
+- **Data Coverage:** {{COVERAGE_PERCENTAGE}}%
+- **Conflict Rate:** {{CONFLICT_RATE}}%
+- **Recommended Strategy:** {{STRATEGY}}
+
+## Source Comparison Matrix
+| Source | Reliability | Completeness | Freshness | Coverage | Priority |
+|--------|-------------|--------------|-----------|----------|----------|
+| {{SOURCE_1}} | {{REL_1}} | {{COMP_1}} | {{FRESH_1}} | {{COV_1}} | {{PRI_1}} |
+| {{SOURCE_2}} | {{REL_2}} | {{COMP_2}} | {{FRESH_2}} | {{COV_2}} | {{PRI_2}} |
+
+## Content Overlap Analysis
+### Exact Matches: {{EXACT_MATCHES}} ({{EXACT_PERCENTAGE}}%)
+### Fuzzy Matches: {{FUZZY_MATCHES}} ({{FUZZY_PERCENTAGE}}%)
+### Unique Content: {{UNIQUE_CONTENT}} ({{UNIQUE_PERCENTAGE}}%)
+
+## Conflict Analysis
+### Critical Conflicts: {{CRITICAL_CONFLICTS}}
+- {{CONFLICT_1}}: {{RESOLUTION_1}}
+- {{CONFLICT_2}}: {{RESOLUTION_2}}
+
+### Resolvable Conflicts: {{RESOLVABLE_CONFLICTS}}
+### Data Quality Issues: {{QUALITY_ISSUES}}
+
+## Data Fusion Strategy
+### Prioritization Rules:
+```yaml
+{{PRIORITIZATION_RULES}}
+```
+
+### Conflict Resolution:
+```yaml
+{{RESOLUTION_STRATEGIES}}
+```
+
+## Master Schema Design
+### Unified Entities: {{ENTITY_COUNT}}
+### Relationship Mappings: {{RELATIONSHIP_COUNT}}
+### Quality Gates: {{QUALITY_GATES}}
+
+## Recommendations
+1. **{{RECOMMENDATION_1}}**
+2. **{{RECOMMENDATION_2}}**
+3. **{{RECOMMENDATION_3}}**
+
+## Implementation Plan
+### Phase 1: {{PHASE_1_DESCRIPTION}}
+### Phase 2: {{PHASE_2_DESCRIPTION}}
+### Phase 3: {{PHASE_3_DESCRIPTION}}
+```
+
+## 🚦 Quality Gates
+
+### Multi-Source Analysis Completion:
+- [ ] All sources cataloged and classified
+- [ ] Data quality metrics calculated for each source
+- [ ] Content overlap analysis completed
+- [ ] Conflict detection and categorization done
+- [ ] Resolution strategies defined
+- [ ] Master schema designed
+- [ ] Data fusion architecture planned
+
+### Ready for Multi-Source Architecture Planning:
+- [ ] Source prioritization matrix approved
+- [ ] Conflict resolution rules validated
+- [ ] Master data model finalized
+- [ ] Implementation roadmap created
+- [ ] Stakeholder approval obtained
+
+## 🔄 Transition Rules
+- **→ Multi-Source Architecture Planning**: When analysis complete + strategies approved
+- **→ Target Analysis**: If individual source analysis needed
+- **← Multi-Source Analysis**: When new sources discovered or conflicts emerge
+
+## 📊 Success Metrics
+- Source analysis completeness: 100%
+- Conflict detection accuracy: ≥95%
+- Data fusion strategy feasibility: Validated
+- Stakeholder consensus: Achieved
+- Implementation roadmap: Approved
+
+## 🚨 Error Handling
+- **Source Unavailable**: Mark as degraded, adjust priorities
+- **Conflict Resolution Failure**: Escalate to manual review
+- **Schema Incompatibility**: Design custom mapping layer
+- **Performance Concerns**: Optimize source selection strategy
+
+## 🎯 Advanced Multi-Source Features
+
+### Intelligent Source Selection
+- **Dynamic Prioritization**: Adjust source priorities based on real-time quality
+- **Content-Aware Selection**: Choose best source per content type
+- **Performance-Based Ranking**: Factor in response times and reliability
+
+### Conflict Resolution Automation
+- **Rule-Based Resolution**: Automated conflict resolution using predefined rules
+- **ML-Powered Decisions**: Machine learning for complex conflict scenarios
+- **Human-in-the-Loop**: Escalation for unresolvable conflicts
+
+### Data Quality Monitoring
+- **Real-Time Quality Scoring**: Continuous assessment of source quality
+- **Anomaly Detection**: Identify unusual patterns or quality degradation
+- **Proactive Source Management**: Automatic source substitution when quality drops

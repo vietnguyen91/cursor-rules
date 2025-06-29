@@ -6,10 +6,23 @@ alwaysApply: true
 # 🧭 Master Orchestrator (v4 - Deterministic)
 Orchestrate the entire workflow by **determining a single active mode** based on the project state.
 
-## 🤖 **Mode Detection Logic (Distributed)**
-The agent MUST check these conditions by **iterating through all feature-specific index files**.
+## 🤖 **Mode Detection Logic (Website Clone Enhanced)**
+The agent MUST check these conditions by **iterating through all feature-specific index files** and **analyzing user requests**.
 
-### 0. Check for `Brainstorming` Mode (Manual or Pending Blueprint)
+### 0. Check for `Multi-Source Analysis` Mode (NEW - Highest Priority for Multi-Source Projects)
+*   `IF` user request contains keywords: `"multi-source"`, `"analyze all sources"`, `"compare sources"`, `"aggregate data"` **OR**
+*   `IF` user mentions multiple data sources for analysis **OR**
+*   `IF` existing project shows evidence of multiple sources but lacks multi-source analysis:
+    *   `THEN` **CURRENT_MODE = Multi-Source Analysis**. Exit detection.
+
+### 0.1. Check for `Target Analysis` Mode (Single Source Projects)
+*   `IF` user request contains keywords: `"clone website"`, `"analyze target"`, `"scrape from"` **OR**
+*   `IF` user provides a new target website URL for analysis **OR**
+*   `IF` a target website is mentioned but `docs/targets/{website}.analysis.md` does **NOT** exist **OR**
+*   `IF` user explicitly requests target analysis for an existing website:
+    *   `THEN` **CURRENT_MODE = Target Analysis**. Exit detection.
+
+### 1. Check for `Brainstorming` Mode (Manual or Pending Blueprint)
 *   `IF` the user explicitly starts a brainstorming session (command contains the keyword `brainstorm` **OR**
     the shared `orchestrator_state.brainstorm_requested` flag is `true`) **OR**
 *   `IF` a feature directory exists in `docs/features/*/requirements/` **BUT**
@@ -17,27 +30,43 @@ The agent MUST check these conditions by **iterating through all feature-specifi
     the root `docs/tasks/task-index.json` does **NOT** yet list tasks for that feature:
     *   `THEN` **CURRENT_MODE = Brainstorming**. Exit detection.
 
-### 1. Check for `Initializing` Mode
+### 2. Check for `Initializing` Mode
 -   `IF` `docs/tasks/task-index.json` does not exist:
 -   `THEN` **CURRENT_MODE = Initializing**. Exit detection.
 
-### 2. Check for `Developing` Mode
+### 3. Check for `Content Sync` Mode (NEW - Production Operations)
+*   `IF` user request contains keywords: `"sync content"`, `"monitor content"`, `"production sync"`, `"content monitoring"` **OR**
+-   `READ` root `docs/tasks/task-index.json`.
+-   **`FOR EACH`** feature in `features` array:
+    -   `READ` the feature-specific index file from `feature.path`.
+    -   `IF` any task has `status: "deployed"` OR `status: "production"` OR `status: "sync"`:
+        -   `THEN` **CURRENT_MODE = Content Sync**. Exit detection.
+
+### 4. Check for `Integration Testing` Mode (NEW - Testing Phase)
+*   `IF` user request contains keywords: `"test scraping"`, `"integration test"`, `"validate scraping"`, `"e2e test"` **OR**
+-   `READ` root `docs/tasks/task-index.json`.
+-   **`FOR EACH`** feature in `features` array:
+    -   `READ` the feature-specific index file from `feature.path`.
+    -   `IF` any task has `status: "ready-for-testing"` OR `status: "testing"`:
+        -   `THEN` **CURRENT_MODE = Integration Testing**. Exit detection.
+
+### 5. Check for `Developing` Mode
 -   `READ` root `docs/tasks/task-index.json`.
 -   **`FOR EACH`** feature in `features` array:
     -   `READ` the feature-specific index file from `feature.path`.
     -   `IF` any task has `status: "approved"` OR `status: "developing"`:
         -   `THEN` **CURRENT_MODE = Developing**. Exit detection.
 
-### 3. Check for `Documenting` Mode
+### 6. Check for `Documenting` Mode
 -   `READ` root `docs/tasks/task-index.json`.
 -   **`FOR EACH`** feature in `features` array:
     -   `READ` the feature-specific index file from `feature.path`.
     -   `IF` any task has `status: "done"` OR `status: "review"` AND docs are out-of-sync:
         -   `THEN` **CURRENT_MODE = Documenting**. Exit detection.
 
-### 4. Default to `Planning` Mode
+### 7. Default to `Architecture Planning` Mode (Enhanced Planning)
 -   `IF` none of the above conditions are met:
--   `THEN` **CURRENT_MODE = Planning**. This is the default state for a ready project with no active tasks.
+-   `THEN` **CURRENT_MODE = Architecture Planning**. This is the default state for a ready project with target analysis complete but no active tasks.
 
 ## 🛠 Core Workflow (Updated)
 1.  **DETERMINE CURRENT_MODE** using the Mode Detection Logic above.
@@ -49,18 +78,42 @@ The agent MUST check these conditions by **iterating through all feature-specifi
 ## 🔄 Mode Transition Philosophy
 **Modes are flexible workflows, NOT linear cycles.**
 
-### Dynamic Transitions:
-- **Developing → Planning**: When user requests a new feature, or detects a need for spec updates
-- **Planning → Developing**: When blueprint is ready and user starts a task
-- **Developing → Documenting**: When a task is completed and docs need updating
-- **Documenting → Planning**: When writing docs detects gaps in requirements
+### Dynamic Transitions (Website Clone Enhanced):
+- **Target Analysis → Architecture Planning**: When analysis complete + legal approved
+- **Architecture Planning → Developing**: When blueprint approved + tasks defined
+- **Developing → Integration Testing**: When core functionality complete + ready for testing
+- **Integration Testing → Content Sync**: When all tests pass + ready for deployment
+- **Content Sync → Documenting**: When sync system stable + documentation needed
+- **Developing → Target Analysis**: When new target website discovered or requirements change
+- **Integration Testing → Developing**: If critical bugs discovered requiring fixes
+- **Content Sync → Integration Testing**: If major issues requiring retesting
+- **Any Mode → Target Analysis**: When user requests to clone new website
 - **Any Mode → Initializing**: When project structure is broken or reset
 
-### Triggers for Mode Changes:
-1. **User explicit request**: "Plan new feature X", "Start coding TASK_Y"
-2. **Project state changes**: Task status updates, missing files, blueprint approvals
-3. **Validation failures**: Missing specs → back to Planning, incomplete tests → stay in Developing
-4. **Context requirements**: Need different utilities/rules for current work
+### Triggers for Mode Changes (Website Clone Enhanced):
+1. **User explicit requests**: 
+   - "Clone website X" → Target Analysis Mode
+   - "Analyze target site" → Target Analysis Mode
+   - "Test scraping functionality" → Integration Testing Mode
+   - "Sync content" → Content Sync Mode
+   - "Monitor production" → Content Sync Mode
+
+2. **Project state changes**: 
+   - Task status updates (approved→developing, testing→deployed)
+   - Missing target analysis files → Target Analysis Mode
+   - Blueprint approvals → Architecture Planning Mode
+   - Test completion → Content Sync Mode
+
+3. **Validation failures**: 
+   - Missing target analysis → back to Target Analysis
+   - Failed tests → back to Developing 
+   - Sync failures → stay in Content Sync with error handling
+   - Legal compliance issues → back to Target Analysis
+
+4. **Context requirements**: 
+   - Need MCP tools for specific tasks
+   - Different utilities/rules for current work phase
+   - Specialized templates for scraping vs general development
 
 ## 🔒 Enforcement
 - Prohibit code generation if blueprint is not Gate 1.
@@ -68,19 +121,25 @@ The agent MUST check these conditions by **iterating through all feature-specifi
 - Violation ⇒ warn & auto-switch to appropriate mode.
 Detailed in `utilities/enforcer.mdc`
 
-## 📂 Mode-Specific Rules Mapping
+## 📂 Mode-Specific Rules Mapping (Multi-Source Enhanced)
 Each mode MUST load its corresponding rule file:
 - **Initializing Mode** → `modes/initializing-mode.mdc`
-- **Planning Mode** → `modes/planning-agent.mdc`  
-- **Developing Mode** → `modes/developing-mode.mdc`
-- **Documenting Mode** → `modes/documenting-mode.mdc`
+- **Multi-Source Analysis Mode** → `modes/multi-source-analysis-mode.mdc` *(NEW)*
+- **Target Analysis Mode** → `modes/target-analysis-mode.mdc` *(NEW)*
 - **Brainstorming Mode** → `modes/brainstorming-mode.mdc`
+- **Architecture Planning Mode** → `modes/architecture-planning-mode.mdc` *(MULTI-SOURCE ENHANCED)*
+- **Developing Mode** → `modes/developing-mode.mdc` *(ENHANCED)*
+- **Integration Testing Mode** → `modes/integration-testing-mode.mdc` *(NEW)*
+- **Content Sync Mode** → `modes/content-sync-mode.mdc` *(MULTI-SOURCE ENHANCED)*
+- **Documenting Mode** → `modes/documenting-mode.mdc`
 
 The `context-loader` is responsible for loading these based on `CURRENT_MODE`. These mode files contain:
 - Specific behaviors and constraints for that mode
 - Required utilities to trigger-load
+- MCP tools configuration for that mode
 - Output format guidelines
 - Transition criteria
+- Quality gates and success metrics
 
 ## 📏 Documentation Freshness Heuristic
 For a given feature, docs are considered **out-of-sync** when **any** source code file under that feature's directory tree has a last-modified timestamp newer than the most recent `.md` file in `docs/features/<feature>/`.

@@ -8,7 +8,10 @@
   },
   "scripts": {
     "test": "node scripts/simple-test.js",
+    "test-private": "node scripts/test-private-install.js",
     "publish": "node scripts/publish.js",
+    "install-local": "node bin/install.js",
+    "install-private": "GITHUB_TOKEN=$GITHUB_TOKEN node bin/install.js",
     "prepack": "echo \"Preparing package for publication...\"",
     "postpack": "echo \"Package ready for publication\""
   },
@@ -20,7 +23,9 @@
     "workflow",
     "development",
     "automation",
-    "npx"
+    "npx",
+    "github-token",
+    "private-repository"
   ],
   "author": "Cursor Rules Agent Team",
   "license": "MIT",
@@ -28,11 +33,12 @@
     "fs-extra": "^11.2.0",
     "chalk": "^4.1.2",
     "inquirer": "^8.2.6",
-    "ora": "^5.4.1"
+    "ora": "^5.4.1",
+    "axios": "^1.6.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/khanhbkqt/cursor-rules-agent.git"
+    "url": "https://github.com/vietnguyen91/cursor-rules.git"
   },
   "engines": {
     "node": ">=14.0.0"

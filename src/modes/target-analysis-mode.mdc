@@ -3,3 +3,259 @@ description:
 globs:
 alwaysApply: false
 ---
+# 🎯 Target Analysis Mode
+Deep analysis of target websites for comprehensive cloning strategy with enhanced MCP capabilities.
+
+## 🎯 Activation
+- User requests to clone a new website
+- Missing `docs/targets/{website}.analysis.md` 
+- User explicitly requests "analyze website X"
+- Keyword triggers: "clone", "scrape", "analyze target"
+
+## 🧰 MCP Tools Integration
+
+### Available Tools for Target Analysis:
+1. **Web Search** - Research target website technology, hosting, competitors
+2. **Playwright** - Automated page analysis, structure mapping, performance testing
+3. **Sequential Thinking** - Systematic analysis methodology
+4. **Interactive MCP** - Legal compliance confirmation, stakeholder decisions
+
+## 📋 Comprehensive Analysis Workflow
+
+### Phase 1: Initial Website Discovery
+1. **Basic Information Gathering**:
+   - Domain analysis and ownership
+   - Hosting provider and CDN detection
+   - SSL certificate analysis
+   - DNS configuration review
+
+2. **Technology Stack Detection**:
+   - Frontend frameworks (React, Vue, Angular, etc.)
+   - Backend technologies (Node.js, PHP, Python, etc.)
+   - Database systems (MongoDB, MySQL, PostgreSQL)
+   - Content Management Systems
+   - Third-party integrations
+
+3. **Performance Baseline**:
+   - Page load times
+   - Core Web Vitals
+   - Mobile optimization score
+   - SEO performance metrics
+
+### Phase 2: Deep Content Analysis
+1. **Content Structure Mapping**:
+   - Page hierarchy and navigation
+   - Content types and categories
+   - Media assets (images, videos, documents)
+   - Dynamic vs static content identification
+
+2. **Data Flow Analysis**:
+   - API endpoints discovery
+   - Form submissions and user interactions
+   - Search functionality analysis
+   - Pagination and filtering systems
+
+3. **Content Volume Assessment**:
+   - Total pages/posts estimation
+   - Media storage requirements
+   - Content update frequency
+   - User-generated content patterns
+
+### Phase 3: Technical Deep Dive
+1. **Frontend Architecture Analysis**:
+   - JavaScript frameworks and libraries
+   - CSS methodologies and frameworks
+   - Build tools and bundlers
+   - State management patterns
+
+2. **Backend System Analysis**:
+   - Server architecture patterns
+   - Database schema inference
+   - Caching strategies
+   - Security implementations
+
+3. **API & Integration Analysis**:
+   - REST/GraphQL API structure
+   - Third-party service integrations
+   - Authentication mechanisms
+   - Rate limiting and security measures
+
+### Phase 4: Legal & Compliance Review
+1. **Terms of Service Analysis**:
+   - Scraping restrictions
+   - Content usage rights
+   - Rate limiting requirements
+   - Attribution requirements
+
+2. **Copyright & Intellectual Property**:
+   - Content ownership verification
+   - Fair use assessment
+   - Trademark considerations
+   - DMCA compliance requirements
+
+3. **Data Privacy Compliance**:
+   - GDPR/CCPA considerations
+   - User data handling
+   - Cookie policies
+   - Privacy policy analysis
+
+### Phase 5: Security & Risk Assessment
+1. **Security Measures Detection**:
+   - Bot detection systems
+   - Rate limiting mechanisms
+   - IP blocking strategies
+   - CAPTCHA implementations
+
+2. **Risk Analysis**:
+   - Legal risks assessment
+   - Technical risks evaluation
+   - Business risks identification
+   - Mitigation strategies planning
+
+## 📊 Analysis Output Structure
+
+### Target Analysis Report Template:
+```markdown
+# Target Website Analysis: {website_name}
+
+## Executive Summary
+- **Website:** {url}
+- **Analysis Date:** {date}
+- **Feasibility Score:** {score}/10
+- **Risk Level:** {low/medium/high}
+
+## Technical Stack
+### Frontend
+- Framework: {framework}
+- Build Tools: {tools}
+- Key Libraries: {libraries}
+
+### Backend
+- Server Technology: {tech}
+- Database: {database}
+- Hosting: {hosting}
+
+## Content Analysis
+### Structure
+- Page Types: {types}
+- Total Pages: ~{estimate}
+- Content Categories: {categories}
+
+### Data Models (Inferred)
+- Primary Entities: {entities}
+- Relationships: {relationships}
+- Key Fields: {fields}
+
+## Scraping Strategy
+### Approach
+- Method: {api/scraping/hybrid}
+- Tools Required: {tools}
+- Estimated Complexity: {complexity}
+
+### Technical Challenges
+- {challenge_1}
+- {challenge_2}
+- {challenge_3}
+
+## Legal Compliance
+### Status: {compliant/review_required/restricted}
+- Terms of Service: {analysis}
+- Content Rights: {status}
+- Scraping Restrictions: {restrictions}
+
+## Risk Assessment
+### Technical Risks
+- {risk_1}: {mitigation}
+- {risk_2}: {mitigation}
+
+### Legal Risks
+- {risk_1}: {mitigation}
+- {risk_2}: {mitigation}
+
+## Recommendations
+- {recommendation_1}
+- {recommendation_2}
+- {recommendation_3}
+
+## Next Steps
+- [ ] Legal review completion
+- [ ] Architecture planning
+- [ ] Proof of concept development
+```
+
+## 🔬 Advanced Analysis Tools
+
+### 1. Automated Structure Discovery
+```javascript
+// Structure discovery script
+const analyzePageStructure = async (url) => {
+  // Navigate to page
+  // Extract navigation structure
+  // Map content types
+  // Identify dynamic elements
+  // Generate data model suggestions
+}
+```
+
+### 2. Performance Profiling
+```javascript
+// Performance analysis
+const performanceProfile = {
+  loadTime: 'measure',
+  resourceSize: 'calculate',
+  renderMetrics: 'collect',
+  optimization: 'suggest'
+}
+```
+
+### 3. Content Pattern Recognition
+```javascript
+// Pattern recognition for content types
+const contentPatterns = {
+  articles: 'detect_article_structure',
+  products: 'identify_product_schema',
+  media: 'catalog_media_types',
+  user_content: 'map_ugc_patterns'
+}
+```
+
+## 🚦 Quality Gates
+### Analysis Completion Criteria:
+- [ ] Technical stack fully identified
+- [ ] Content structure mapped
+- [ ] Data models proposed
+- [ ] Legal compliance verified
+- [ ] Risk assessment completed
+- [ ] Scraping strategy defined
+- [ ] Performance baseline established
+
+### Ready for Architecture Planning:
+- [ ] All analysis phases complete
+- [ ] Legal approval obtained (if required)
+- [ ] Stakeholder sign-off received
+- [ ] Technical feasibility confirmed
+
+## 🔄 Transition Rules
+- **→ Architecture Planning**: When analysis complete + legal approved
+- **→ Initializing**: If project structure issues detected
+- **← Previous Analysis**: If target website significantly changed
+
+## 📈 Success Metrics
+- Comprehensive technical profile created
+- Accurate complexity estimation
+- Legal compliance status clear
+- Risk mitigation strategies defined
+- Actionable next steps provided
+
+## 🚨 Error Handling
+- **Website Inaccessible**: Document limitation, suggest alternatives
+- **Anti-bot Measures**: Analyze restrictions, plan workarounds
+- **Legal Restrictions**: Halt process, require legal review
+- **Technical Complexity**: Escalate to senior review
+
+## 📝 Documentation Requirements
+- Complete analysis report
+- Technical diagrams and flowcharts
+- Risk assessment matrix
+- Legal compliance checklist
+- Recommended architecture outline

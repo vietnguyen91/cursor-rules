@@ -5,15 +5,104 @@ const path = require('path');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const ora = require('ora');
+const axios = require('axios');
 
 // Package info
 const packageInfo = {
   name: 'Cursor Rules Agent',
   version: '1.0.0',
-  github: 'https://github.com/your-org/cursor-rules-agent'
+  github: 'https://github.com/vietnguyen91/cursor-rules'
 };
 
-// Rules data structure (embedded)
+// GitHub configuration
+const GITHUB_REPO = 'vietnguyen91/cursor-rules';
+const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main';
+const GITHUB_API_URL = 'https://api.github.com/repos/vietnguyen91/cursor-rules';
+
+// Configure axios instance for GitHub API
+let githubAuth = {};
+if (process.env.GITHUB_TOKEN) {
+  githubAuth.headers = {
+    'Authorization': `token ${process.env.GITHUB_TOKEN}`,
+    'User-Agent': 'Cursor-Rules-Agent-Installer'
+  };
+}
+
+const githubApi = axios.create({
+  baseURL: GITHUB_API_URL,
+  ...githubAuth
+});
+
+const rawFiles = axios.create({
+  baseURL: GITHUB_BASE_URL,
+  ...githubAuth
+});
+
+// Check GitHub authentication
+async function checkGitHubAuth() {
+  if (process.env.GITHUB_TOKEN) {
+    console.log(chalk.green('✅ GitHub token detected - using authenticated access'));
+    return true;
+  }
+  
+  // Check if .env file has token
+  const envPath = path.join(process.cwd(), '.env');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    const tokenMatch = envContent.match(/GITHUB_TOKEN=(.+)/);
+    if (tokenMatch) {
+      process.env.GITHUB_TOKEN = tokenMatch[1].trim();
+      githubAuth.headers = {
+        'Authorization': `token ${process.env.GITHUB_TOKEN}`,
+        'User-Agent': 'Cursor-Rules-Agent-Installer'
+      };
+      console.log(chalk.green('✅ GitHub token loaded from .env file'));
+      return true;
+    }
+  }
+  
+  // Test if repository is accessible
+  try {
+    await rawFiles.get('/README.md');
+    console.log(chalk.blue('ℹ️ Repository is publicly accessible'));
+    return true;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.log(chalk.red('❌ Repository requires authentication'));
+      console.log('');
+      console.log('To create a GitHub token:');
+      console.log('1. Go to https://github.com/settings/tokens');
+      console.log('2. Click "Generate new token (classic)"');
+      console.log('3. Select "repo" scope for private repositories');
+      console.log('4. Copy the token and set it as an environment variable:');
+      console.log('   export GITHUB_TOKEN=your_token_here');
+      console.log('');
+      console.log('Then run this installer again.');
+      process.exit(1);
+    }
+    return true;
+  }
+}
+
+// Download file with authentication
+async function downloadFile(url, outputPath, description) {
+  try {
+    const response = await rawFiles.get(url);
+    await fs.ensureDir(path.dirname(outputPath));
+    await fs.writeFile(outputPath, response.data);
+    console.log(chalk.gray(`   ✓ Downloaded: ${description}`));
+    return true;
+  } catch (error) {
+    console.error(chalk.red(`   ❌ Failed to download: ${description}`));
+    console.error(chalk.red(`   URL: ${GITHUB_BASE_URL}${url}`));
+    if (error.response) {
+      console.error(chalk.red(`   Status: ${error.response.status} ${error.response.statusText}`));
+    }
+    return false;
+  }
+}
+
+// Rules data structure (embedded as fallback)
 const rulesData = {
   core: {
     'master-orchestrator.mdc': `---
@@ -429,10 +518,11 @@ class CursorRulesInstaller {
     console.log(chalk.cyan.bold(`\n🤖 ${packageInfo.name} Installer v${packageInfo.version}\n`));
     
     try {
+      await checkGitHubAuth();
       await this.checkPrerequisites();
       await this.confirmInstallation();
       await this.createDirectoryStructure();
-      await this.installRules();
+      await this.downloadCursorRules();
       await this.initializeProject();
       await this.setupUserRules();
       this.showSuccess();
@@ -495,7 +585,9 @@ class CursorRulesInstaller {
       'docs',
       'docs/specs',
       'docs/features',
-      'blueprints'
+      'docs/targets',
+      'docs/blueprints',
+      'docs/tasks'
     ];
 
     for (const dir of directories) {
@@ -505,54 +597,121 @@ class CursorRulesInstaller {
     spinner.succeed('Directory structure created');
   }
 
-  async installRules() {
-    const spinner = ora('Installing Cursor Rules...').start();
+  async downloadCursorRules() {
+    const spinner = ora('Downloading Cursor Rules Agent files...').start();
+    spinner.stop();
     
-    // Install core rules
+    console.log(chalk.blue('📥 Downloading files from GitHub repository...'));
+    
+    const fileGroups = {
+      'Core files': {
+        basePath: '/src/core',
+        files: {
+          'master-orchestrator.mdc': '.cursor/rules/core/master-orchestrator.mdc',
+          'context-loader.mdc': '.cursor/rules/core/context-loader.mdc'
+        }
+      },
+      'Mode files': {
+        basePath: '/src/modes',
+        files: {
+          'multi-source-analysis-mode.mdc': '.cursor/rules/modes/multi-source-analysis-mode.mdc',
+          'target-analysis-mode.mdc': '.cursor/rules/modes/target-analysis-mode.mdc',
+          'architecture-planning-mode.mdc': '.cursor/rules/modes/architecture-planning-mode.mdc',
+          'developing-mode.mdc': '.cursor/rules/modes/developing-mode.mdc',
+          'integration-testing-mode.mdc': '.cursor/rules/modes/integration-testing-mode.mdc',
+          'content-sync-mode.mdc': '.cursor/rules/modes/content-sync-mode.mdc',
+          'brainstorming-mode.mdc': '.cursor/rules/modes/brainstorming-mode.mdc',
+          'planning-agent.mdc': '.cursor/rules/modes/planning-agent.mdc',
+          'documenting-mode.mdc': '.cursor/rules/modes/documenting-mode.mdc',
+          'initializing-mode.mdc': '.cursor/rules/modes/initializing-mode.mdc'
+        }
+      },
+      'Utility files': {
+        basePath: '/src/utilities',
+        files: {
+          'safe-code-generation.mdc': '.cursor/rules/utilities/safe-code-generation.mdc',
+          'enforcer.mdc': '.cursor/rules/utilities/enforcer.mdc'
+        }
+      },
+      'Template files': {
+        basePath: '/src/templates',
+        files: {
+          'target-analysis-template.md': '.cursor/rules/templates/target-analysis-template.md',
+          'scraping-blueprint-template.yaml': '.cursor/rules/templates/scraping-blueprint-template.yaml',
+          'blueprint-template.yaml': '.cursor/rules/templates/blueprint-template.yaml',
+          'task-template.md': '.cursor/rules/templates/task-template.md',
+          'task-index-template.json': '.cursor/rules/templates/task-index-template.json',
+          'task-index-feature-template.json': '.cursor/rules/templates/task-index-feature-template.json'
+        }
+      },
+      'Documentation files': {
+        basePath: '',
+        files: {
+          'USER_RULES_TEMPLATE.md': 'USER_RULES_TEMPLATE.md',
+          'MULTI_SOURCE_WORKFLOW_EXAMPLE.md': 'MULTI_SOURCE_WORKFLOW_EXAMPLE.md',
+          'WEBSITE_CLONE_WORKFLOW_EXAMPLE.md': 'WEBSITE_CLONE_WORKFLOW_EXAMPLE.md',
+          'QUICK_INSTALL_GUIDE.md': 'QUICK_INSTALL_GUIDE.md'
+        }
+      }
+    };
+
+    let downloadErrors = [];
+    
+    for (const [groupName, group] of Object.entries(fileGroups)) {
+      console.log(chalk.blue(`\n📁 ${groupName}:`));
+      
+      for (const [filename, outputPath] of Object.entries(group.files)) {
+        const url = `${group.basePath}/${filename}`;
+        const success = await downloadFile(url, path.join(this.currentDir, outputPath), filename);
+        if (!success) {
+          downloadErrors.push({ filename, url, outputPath });
+        }
+      }
+    }
+    
+    if (downloadErrors.length > 0) {
+      console.log(chalk.yellow(`\n⚠️ ${downloadErrors.length} file(s) failed to download. Using embedded fallback where available.`));
+      await this.installEmbeddedRules(downloadErrors);
+    }
+    
+    console.log(chalk.green('\n✅ Cursor Rules Agent files downloaded!'));
+  }
+
+  async installEmbeddedRules(failedFiles) {
+    // Install embedded rules as fallback for failed downloads
     for (const [filename, content] of Object.entries(rulesData.core)) {
-      await fs.writeFile(
-        path.join(this.rulesDir, 'core', filename),
-        content.trim()
-      );
+      if (failedFiles.some(f => f.filename === filename)) {
+        await fs.writeFile(
+          path.join(this.rulesDir, 'core', filename),
+          content.trim()
+        );
+        console.log(chalk.gray(`   ✓ Installed embedded: ${filename}`));
+      }
     }
-
-    // Install mode rules
-    for (const [filename, content] of Object.entries(rulesData.modes)) {
-      await fs.writeFile(
-        path.join(this.rulesDir, 'modes', filename),
-        content.trim()
-      );
-    }
-
-    // Install utilities
-    for (const [filename, content] of Object.entries(rulesData.utilities)) {
-      await fs.writeFile(
-        path.join(this.rulesDir, 'utilities', filename),
-        content.trim()
-      );
-    }
-
-    // Install templates
-    for (const [filename, content] of Object.entries(rulesData.templates)) {
-      await fs.writeFile(
-        path.join(this.rulesDir, 'templates', filename),
-        content.trim()
-      );
-    }
-    
-    spinner.succeed('Cursor Rules installed');
   }
 
   async initializeProject() {
     const spinner = ora('Initializing project files...').start();
     
     // Create task-index.json
-    const taskIndex = JSON.parse(rulesData.templates['task-index-template.json']);
-    taskIndex.project.name = path.basename(this.currentDir);
-    taskIndex.project.last_updated = new Date().toISOString().split('T')[0];
+    const taskIndex = {
+      project: {
+        name: path.basename(this.currentDir),
+        version: "1.0.0",
+        created: new Date().toISOString(),
+        type: this.detectProjectType()
+      },
+      features: [],
+      statistics: {
+        total_tasks: 0,
+        completed_tasks: 0,
+        active_features: 0
+      },
+      last_updated: new Date().toISOString()
+    };
     
     await fs.writeFile(
-      path.join(this.currentDir, 'task-index.json'),
+      path.join(this.currentDir, 'docs', 'tasks', 'task-index.json'),
       JSON.stringify(taskIndex, null, 2)
     );
 
@@ -561,14 +720,60 @@ class CursorRulesInstaller {
       'docs/README.md': '# Documentation\n\nThis directory contains project documentation, specifications, and feature definitions.',
       'docs/features/README.md': '# Features\n\nThis directory contains feature specifications and requirements.',
       'docs/specs/README.md': '# Specifications\n\nThis directory contains detailed technical specifications.',
-      'blueprints/README.md': '# Blueprints\n\nThis directory contains architectural blueprints and design templates.'
+      'docs/blueprints/README.md': '# Blueprints\n\nThis directory contains architectural blueprints and design templates.',
+      'docs/targets/README.md': '# Target Analysis\n\nThis directory contains analysis results for target websites and systems.'
     };
 
     for (const [filepath, content] of Object.entries(readmeFiles)) {
       await fs.writeFile(path.join(this.currentDir, filepath), content);
     }
+
+    // Create .env.example
+    const envExample = `# GitHub Authentication (for private repositories)
+GITHUB_TOKEN=your_github_token_here
+
+# Database Configuration (for website clones)
+MONGODB_URI=mongodb://localhost:27017/your_database
+REDIS_URL=redis://localhost:6379
+
+# Storage Configuration
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_S3_BUCKET=your_s3_bucket
+
+# Application Configuration
+NODE_ENV=development
+PORT=3000
+API_BASE_URL=http://localhost:3000
+`;
+
+    await fs.writeFile(path.join(this.currentDir, '.env.example'), envExample);
     
     spinner.succeed('Project files initialized');
+  }
+
+  detectProjectType() {
+    const packageJsonPath = path.join(this.currentDir, 'package.json');
+    
+    if (fs.existsSync(packageJsonPath)) {
+      const packageJson = fs.readJsonSync(packageJsonPath);
+      const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
+      
+      if (Object.keys(dependencies).some(dep => dep.includes('scraping') || dep.includes('scraper'))) {
+        return 'website-clone';
+      }
+      
+      if (Object.keys(dependencies).some(dep => ['nuxt', 'next', 'react', 'vue'].includes(dep))) {
+        return 'web-app';
+      }
+    }
+    
+    const currentDirName = path.basename(this.currentDir).toLowerCase();
+    if (currentDirName.includes('clone') || currentDirName.includes('scraper')) {
+      return 'website-clone';
+    }
+    
+    return 'general';
   }
 
   async setupUserRules() {
@@ -608,15 +813,32 @@ class CursorRulesInstaller {
   showSuccess() {
     console.log(chalk.green.bold('\n🎉 Installation Complete!\n'));
     
+    if (process.env.GITHUB_TOKEN) {
+      console.log(chalk.blue('🔐 Authentication: GitHub token configured for private repository access\n'));
+    }
+    
     console.log(chalk.white('Next steps:'));
     console.log(chalk.gray('1. Open Cursor in this project'));
-    console.log(chalk.gray('2. Try: ') + chalk.cyan('"bootstrap project structure"'));
-    console.log(chalk.gray('3. Then: ') + chalk.cyan('"Plan feature: User Authentication"'));
+    console.log(chalk.gray('2. Copy USER_RULES_TEMPLATE.md content to Cursor Settings > Rules'));
+    
+    if (!fs.existsSync(path.join(this.currentDir, '.env')) && fs.existsSync(path.join(this.currentDir, '.env.example'))) {
+      console.log(chalk.gray('3. Copy .env.example to .env and configure your environment variables'));
+      console.log(chalk.gray('4. Try: ') + chalk.cyan('"bootstrap project structure"'));
+    } else {
+      console.log(chalk.gray('3. Try: ') + chalk.cyan('"bootstrap project structure"'));
+    }
+    
+    const projectType = this.detectProjectType();
     
     console.log(chalk.white('\nUseful commands:'));
-    console.log(chalk.gray('• ') + chalk.cyan('brainstorm ideas for [feature]'));
-    console.log(chalk.gray('• ') + chalk.cyan('plan feature: [name]'));
-    console.log(chalk.gray('• ') + chalk.cyan('work on TASK_001'));
+    if (projectType === 'website-clone') {
+      console.log(chalk.gray('• ') + chalk.cyan('clone website https://example.com'));
+      console.log(chalk.gray('• ') + chalk.cyan('analyze all sources for data consistency'));
+    } else {
+      console.log(chalk.gray('• ') + chalk.cyan('brainstorm ideas for [feature]'));
+      console.log(chalk.gray('• ') + chalk.cyan('plan feature: [name]'));
+      console.log(chalk.gray('• ') + chalk.cyan('work on TASK_001'));
+    }
     console.log(chalk.gray('• ') + chalk.cyan('update documentation'));
     
     console.log(chalk.white(`\nLearn more: ${packageInfo.github}\n`));

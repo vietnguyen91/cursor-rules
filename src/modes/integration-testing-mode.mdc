@@ -3,3 +3,352 @@ description:
 globs:
 alwaysApply: false
 ---
+# 🧪 Integration Testing Mode (Scraping Specialized)
+Comprehensive testing framework for scraping systems with automated validation and performance testing.
+
+## 🎯 Activation
+- Tasks with status "ready-for-testing" or "testing"
+- User explicitly requests "test scraping" or "integration test"
+- Transition from Developing Mode when core functionality complete
+- Keyword triggers: "test", "validate", "integration", "e2e"
+
+## 🧰 MCP Tools Integration
+
+### Available Tools for Integration Testing:
+1. **Playwright** - Automated browser testing, scraping validation, performance testing
+2. **Sequential Thinking** - Systematic test case design and execution planning
+3. **Interactive MCP** - Test result validation and failure analysis confirmation
+4. **Web Search** - Best practices for testing scraping systems
+
+## 🔬 Comprehensive Testing Workflow
+
+### Phase 1: Test Environment Setup
+1. **Test Data Preparation**:
+   - Create test datasets with known expected results
+   - Setup mock servers for controlled testing
+   - Prepare test URLs with stable content
+   - Configure test database instances
+
+2. **Test Infrastructure Setup**:
+   - Deploy scraping system in test environment
+   - Configure monitoring and logging for tests
+   - Setup performance measurement tools
+   - Initialize test reporting systems
+
+### Phase 2: Functional Testing
+
+#### 2.1 Scraping Accuracy Tests
+```javascript
+// Example test structure
+const scrapingAccuracyTests = {
+  content_extraction: {
+    test_cases: [
+      {
+        name: "article_title_extraction",
+        target_url: "test_url_1",
+        selector: "h1.title",
+        expected_result: "Expected Title",
+        validation_rules: ["not_empty", "max_length_200"]
+      },
+      {
+        name: "content_body_extraction", 
+        target_url: "test_url_2",
+        selector: ".content-body",
+        expected_result: "Expected Content",
+        validation_rules: ["min_length_100", "no_html_tags"]
+      }
+    ]
+  }
+}
+```
+
+#### 2.2 Data Validation Tests
+- **Field Validation**: Verify all required fields are extracted
+- **Data Type Validation**: Ensure data types match schema
+- **Data Quality Checks**: Validate data completeness and accuracy
+- **Relationship Integrity**: Verify foreign key relationships
+
+#### 2.3 Error Handling Tests
+- **Network Failures**: Test behavior with connection timeouts
+- **Invalid Content**: Test handling of malformed HTML/data
+- **Rate Limiting**: Verify proper throttling behavior
+- **Target Changes**: Test resilience to website structure changes
+
+### Phase 3: Performance Testing
+
+#### 3.1 Load Testing
+```yaml
+load_test_scenarios:
+  concurrent_scraping:
+    description: "Test multiple concurrent scrapers"
+    configuration:
+      concurrent_scrapers: 10
+      target_pages: 100
+      duration: "30 minutes"
+      success_criteria:
+        - "failure_rate < 5%"
+        - "avg_response_time < 2000ms"
+        - "memory_usage < 1GB"
+        
+  sustained_load:
+    description: "Test sustained scraping over time"
+    configuration:
+      duration: "2 hours"
+      pages_per_minute: 60
+      success_criteria:
+        - "no_memory_leaks"
+        - "consistent_performance"
+        - "data_integrity_maintained"
+```
+
+#### 3.2 Scalability Testing
+- **Horizontal Scaling**: Test adding more scraper instances
+- **Resource Utilization**: Monitor CPU, memory, network usage
+- **Database Performance**: Test database under load
+- **Cache Efficiency**: Validate caching strategies
+
+#### 3.3 Stress Testing
+- **Peak Load**: Test system limits and breaking points
+- **Resource Exhaustion**: Test behavior under resource constraints
+- **Recovery Testing**: Verify system recovery after failures
+
+### Phase 4: Security & Compliance Testing
+
+#### 4.1 Anti-Bot Evasion Testing
+- **User Agent Rotation**: Verify UA rotation works correctly
+- **Request Patterns**: Test randomization of request timing
+- **IP Rotation**: Validate proxy rotation if implemented
+- **Rate Limiting Compliance**: Ensure respect for rate limits
+
+#### 4.2 Data Privacy Testing
+- **PII Handling**: Verify proper handling of personal data
+- **Data Encryption**: Test encryption at rest and in transit
+- **Access Controls**: Validate authentication and authorization
+- **Audit Logging**: Verify comprehensive audit trails
+
+### Phase 5: Data Integrity Testing
+
+#### 5.1 End-to-End Data Flow Testing
+```
+Source Website → Scraper → Validation → Transformation → Storage → API → Frontend
+      ↓             ↓          ↓             ↓           ↓       ↓        ↓
+   [Test Data] → [Verify] → [Validate] → [Transform] → [Store] → [API] → [Display]
+```
+
+#### 5.2 Data Consistency Tests
+- **Source-to-Database**: Verify data matches source
+- **Database-to-API**: Ensure API returns correct data
+- **API-to-Frontend**: Validate frontend displays correctly
+- **Cross-Reference**: Check data relationships are maintained
+
+### Phase 6: Monitoring & Alerting Testing
+
+#### 6.1 Health Check Validation
+- **Endpoint Availability**: Test all health check endpoints
+- **Alert Thresholds**: Verify alerts trigger at correct thresholds
+- **Escalation Procedures**: Test alert escalation workflows
+- **Recovery Procedures**: Validate automated recovery processes
+
+## 📊 Test Execution Framework
+
+### Test Categories
+```yaml
+test_categories:
+  unit_tests:
+    scope: "Individual components"
+    tools: ["jest", "pytest", "mocha"]
+    coverage_target: 90
+    
+  integration_tests:
+    scope: "Component interactions"
+    tools: ["playwright", "selenium", "cypress"]
+    coverage_target: 80
+    
+  e2e_tests:
+    scope: "Full user workflows"
+    tools: ["playwright", "testcafe"]
+    coverage_target: 70
+    
+  performance_tests:
+    scope: "System performance"
+    tools: ["k6", "jmeter", "artillery"]
+    metrics: ["throughput", "latency", "resource_usage"]
+    
+  security_tests:
+    scope: "Security vulnerabilities"
+    tools: ["owasp_zap", "burp_suite"]
+    focus: ["injection", "authentication", "authorization"]
+```
+
+### Automated Test Execution
+```javascript
+// Test execution pipeline
+const testPipeline = {
+  pre_test: {
+    actions: [
+      "setup_test_environment",
+      "deploy_test_version",
+      "initialize_test_data",
+      "configure_monitoring"
+    ]
+  },
+  
+  test_execution: {
+    parallel_execution: true,
+    test_suites: [
+      "functional_tests",
+      "performance_tests", 
+      "security_tests",
+      "data_integrity_tests"
+    ],
+    failure_handling: "continue_on_failure"
+  },
+  
+  post_test: {
+    actions: [
+      "collect_test_results",
+      "generate_reports",
+      "cleanup_test_environment",
+      "notify_stakeholders"
+    ]
+  }
+}
+```
+
+## 📈 Test Reporting & Analysis
+
+### Test Result Dashboard
+```yaml
+dashboard_metrics:
+  overall_health:
+    - total_tests: "count"
+    - passed_tests: "count"
+    - failed_tests: "count"
+    - test_coverage: "percentage"
+    
+  performance_metrics:
+    - avg_response_time: "milliseconds"
+    - throughput: "pages_per_minute"
+    - error_rate: "percentage"
+    - resource_utilization: "percentage"
+    
+  data_quality:
+    - extraction_accuracy: "percentage"
+    - data_completeness: "percentage"
+    - validation_failures: "count"
+    - consistency_score: "percentage"
+```
+
+### Automated Reporting
+```markdown
+# Test Execution Report
+
+## Summary
+- **Test Run ID:** {{TEST_RUN_ID}}
+- **Execution Date:** {{EXECUTION_DATE}}
+- **Duration:** {{EXECUTION_DURATION}}
+- **Overall Status:** {{OVERALL_STATUS}}
+
+## Test Results
+| Category | Total | Passed | Failed | Coverage |
+|----------|-------|--------|--------|----------|
+| Unit Tests | {{UNIT_TOTAL}} | {{UNIT_PASSED}} | {{UNIT_FAILED}} | {{UNIT_COVERAGE}} |
+| Integration | {{INT_TOTAL}} | {{INT_PASSED}} | {{INT_FAILED}} | {{INT_COVERAGE}} |
+| E2E Tests | {{E2E_TOTAL}} | {{E2E_PASSED}} | {{E2E_FAILED}} | {{E2E_COVERAGE}} |
+| Performance | {{PERF_TOTAL}} | {{PERF_PASSED}} | {{PERF_FAILED}} | {{PERF_COVERAGE}} |
+
+## Performance Metrics
+- **Average Response Time:** {{AVG_RESPONSE_TIME}}ms
+- **Peak Throughput:** {{PEAK_THROUGHPUT}} pages/min
+- **Error Rate:** {{ERROR_RATE}}%
+- **Resource Usage:** {{RESOURCE_USAGE}}%
+
+## Critical Issues
+{{CRITICAL_ISSUES_LIST}}
+
+## Recommendations
+{{RECOMMENDATIONS_LIST}}
+```
+
+## 🚦 Quality Gates
+
+### Testing Completion Criteria:
+- [ ] All functional tests passing (≥95% success rate)
+- [ ] Performance benchmarks met
+- [ ] Security tests passed
+- [ ] Data integrity validated (≥99% accuracy)
+- [ ] Error handling verified
+- [ ] Monitoring systems operational
+
+### Ready for Production:
+- [ ] Full test suite passing
+- [ ] Performance requirements met
+- [ ] Security review completed
+- [ ] Data quality validated
+- [ ] Monitoring and alerting active
+- [ ] Runbook documentation complete
+
+## 🔄 Transition Rules
+- **→ Content Sync Mode**: When all tests pass + ready for deployment
+- **→ Developing Mode**: If critical bugs discovered requiring fixes
+- **→ Architecture Planning**: If fundamental architecture issues found
+- **← Continuous Testing**: Regular regression testing cycles
+
+## 📊 Success Metrics
+- Test automation coverage ≥80%
+- Critical bug detection rate
+- Performance regression detection
+- Data quality assurance score
+- Security vulnerability detection
+
+## 🚨 Error Handling
+- **Test Failures**: Categorize, prioritize, and assign for resolution
+- **Performance Degradation**: Alert development team, rollback if needed
+- **Data Integrity Issues**: Halt deployment, investigate data corruption
+- **Security Vulnerabilities**: Immediate escalation, patch deployment
+
+## 📝 Test Documentation
+- Comprehensive test plans and cases
+- Performance benchmarking reports
+- Security testing results
+- Data quality validation reports
+- Test automation scripts and configuration
+
+## 🔧 Test Environment Management
+```yaml
+test_environments:
+  staging:
+    purpose: "Pre-production testing"
+    data: "Production-like dataset"
+    configuration: "Production mirror"
+    
+  performance:
+    purpose: "Load and stress testing"
+    data: "Large-scale test dataset"
+    configuration: "High-resource allocation"
+    
+  security:
+    purpose: "Security and penetration testing"
+    data: "Sanitized production data"
+    configuration: "Hardened security settings"
+```
+
+## 🎯 Specialized Scraping Tests
+
+### Content Validation Tests
+- **Selector Accuracy**: Verify CSS selectors extract correct elements
+- **Content Completeness**: Ensure all expected content is captured
+- **Format Consistency**: Validate data format standardization
+- **Language Detection**: Test multi-language content handling
+
+### Anti-Detection Tests
+- **Bot Detection Evasion**: Test stealth capabilities
+- **Rate Limiting Compliance**: Verify respectful scraping practices
+- **Session Management**: Test cookie and session handling
+- **Request Fingerprinting**: Validate request pattern randomization
+
+### Scalability Tests
+- **Concurrent Scraping**: Test multiple simultaneous scrapers
+- **Queue Management**: Validate job queue handling
+- **Resource Scaling**: Test automatic resource scaling
+- **Fault Tolerance**: Verify system resilience under failures
