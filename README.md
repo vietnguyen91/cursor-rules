@@ -67,6 +67,29 @@ cd cursor-rules/cursor-rules-agent
 GITHUB_TOKEN=your_token npm run install-local
 ```
 
+### **🔄 Existing Project Integration**
+
+**Đã có dự án và muốn áp dụng workflow này để tiếp tục phát triển?**
+
+📋 **[Existing Project Setup Guide](./EXISTING_PROJECT_SETUP.md)** - Hướng dẫn chi tiết tích hợp workflow vào dự án có sẵn
+
+```bash
+# Quick setup for existing projects
+curl -sSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/setup-existing.sh | bash
+
+# Or manual setup
+git clone https://github.com/vietnguyen91/cursor-rules.git .cursor-rules-temp
+cp -r .cursor-rules-temp/src .cursor-rules/
+cp .cursor-rules-temp/EXISTING_PROJECT_SETUP.md ./
+rm -rf .cursor-rules-temp
+```
+
+**Workflow sẽ tự động phát hiện trạng thái hiện tại của dự án:**
+- ✅ **Dự án có source code** → Developing Mode hoặc Planning Mode
+- ✅ **Dự án đang scraping** → Integration Testing Mode  
+- ✅ **Dự án production** → Content Sync Mode
+- ✅ **Cần thêm feature** → Brainstorming/Planning Mode
+
 ---
 
 ### **🔑 GitHub Token Setup Guide**

@@ -9,6 +9,7 @@
   "scripts": {
     "test": "node scripts/simple-test.js",
     "test-private": "node scripts/test-private-install.js",
+    "test-existing": "node scripts/test-existing-setup.js",
     "publish": "node scripts/publish.js",
     "install-local": "node bin/install.js",
     "install-private": "GITHUB_TOKEN=$GITHUB_TOKEN node bin/install.js",

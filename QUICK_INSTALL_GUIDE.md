@@ -72,6 +72,40 @@ GITHUB_TOKEN=your_token npm run install-local
 
 ---
 
+## 🔄 For Existing Projects
+
+Already have a project and want to integrate this workflow system?
+
+### Quick Setup for Existing Projects
+
+```bash
+# One-line setup for existing projects
+curl -sSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/setup-existing.sh | bash
+
+# Or manual integration
+git clone https://github.com/vietnguyen91/cursor-rules.git .cursor-rules-temp
+cp -r .cursor-rules-temp/cursor-rules-agent/src .cursor-rules/
+cp .cursor-rules-temp/cursor-rules-agent/EXISTING_PROJECT_SETUP.md ./
+rm -rf .cursor-rules-temp
+```
+
+### What the Setup Does:
+- ✅ **Analyzes your existing code** and project structure
+- ✅ **Auto-detects project type** (web app, scraping, etc.)
+- ✅ **Creates documentation structure** without affecting your code
+- ✅ **Configures workflow modes** based on current project state
+- ✅ **Preserves all existing files** and folder structure
+
+### Project State Detection:
+- **Has Source Code** → Developing Mode or Planning Mode
+- **Scraping Project** → Integration Testing Mode  
+- **Production System** → Content Sync Mode
+- **Need New Features** → Brainstorming/Planning Mode
+
+📋 **[Complete Existing Project Guide](./EXISTING_PROJECT_SETUP.md)** - Detailed integration instructions
+
+---
+
 ## ⚡ Quick Start Commands
 
 After installation, try these commands in Cursor:
