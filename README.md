@@ -227,7 +227,7 @@ module.exports = {
 }
 ```
 
-### **Website Clone Configuration:**
+### **Website Clone Infrastructure Configuration:**
 ```yaml
 # .cursor-rules.yaml
 website_clone:
@@ -241,10 +241,59 @@ website_clone:
     intelligent_rate_limiting: true
     content_deduplication: true
     
+  # Database Configuration
+  database:
+    primary: "mongodb"  # or "postgresql", "mysql"
+    connection_string: "${DB_CONNECTION_STRING}"
+    collections:
+      - movies
+      - episodes  
+      - categories
+      - users
+    indexes:
+      - {collection: "movies", fields: ["slug", "title", "year"]}
+      - {collection: "episodes", fields: ["movie_id", "episode_number"]}
+    
+  # Storage & Media Configuration
+  storage:
+    media_storage: "aws_s3"  # or "cloudflare_r2", "local", "google_cloud"
+    cdn: "cloudflare"        # or "aws_cloudfront", "bunnycdn"
+    
+    # Image handling
+    images:
+      posters: "s3://my-bucket/posters/"
+      thumbnails: "s3://my-bucket/thumbnails/"
+      optimization: true
+      formats: ["webp", "jpg", "png"]
+      sizes: [300, 600, 1200]  # responsive sizes
+      
+    # Video handling  
+    videos:
+      storage: "external_links"  # or "s3", "bunnycdn", "local"
+      streaming: "hls"           # or "dash", "mp4"
+      qualities: ["480p", "720p", "1080p", "4K"]
+      backup_sources: true
+      
+    # File management
+    documents:
+      subtitles: "s3://my-bucket/subtitles/"
+      metadata: "s3://my-bucket/metadata/"
+      compression: true
+      
+  # Performance & Caching
+  caching:
+    redis_url: "${REDIS_URL}"
+    cache_duration:
+      movie_data: "24h"
+      episode_lists: "12h" 
+      search_results: "1h"
+      images: "7d"
+      
   deployment:
     staging_validation: true
     production_monitoring: true
     automated_rollback: true
+    backup_schedule: "daily"
 ```
 
 ---
@@ -278,6 +327,526 @@ git tag v1.0-single-source
 - 🎯 **Content Accuracy**: Significant improvement with cross-validation
 - 🚀 **Video Availability**: +35% more working video links
 - 🔧 **Maintenance**: 75% reduction in manual fixes
+
+---
+
+## 🗄️ **Database & Storage Architecture Guide**
+
+### **📊 Database Selection for Website Clones**
+
+#### **MongoDB (Recommended for Movie Sites)**
+```javascript
+// Rophim Project Schema Example
+const movieSchema = {
+  _id: ObjectId,
+  slug: "avengers-endgame-2019",
+  title: "Avengers: Endgame",
+  original_title: "Avengers: Endgame",
+  
+  // Media URLs
+  poster: {
+    original: "https://cdn.rophim.com/posters/avengers-endgame.jpg",
+    thumbnail: "https://cdn.rophim.com/thumbs/avengers-endgame-300.webp",
+    sizes: {
+      small: "300x450",
+      medium: "600x900", 
+      large: "1200x1800"
+    }
+  },
+  
+  // Episode data
+  episodes: [{
+    episode_number: 1,
+    title: "Full Movie",
+    video_sources: [{
+      quality: "1080p",
+      url: "https://stream.rophim.com/avengers/1080p.m3u8",
+      type: "hls",
+      server: "server1"
+    }]
+  }],
+  
+  // Storage tracking
+  storage_info: {
+    poster_uploaded: true,
+    poster_cdn_url: "https://cdn.rophim.com/...",
+    video_links_validated: true,
+    last_media_check: "2025-01-16T10:30:00Z"
+  }
+}
+```
+
+**Why MongoDB for Movie Sites:**
+- ✅ **Flexible schema** for varying movie metadata
+- ✅ **Nested documents** perfect for episodes/seasons
+- ✅ **JSON-like structure** matches scraped data
+- ✅ **Horizontal scaling** for large catalogs
+- ✅ **Rich queries** for search/filtering
+
+#### **PostgreSQL Alternative**
+```sql
+-- Rophim PostgreSQL Schema
+CREATE TABLE movies (
+    id SERIAL PRIMARY KEY,
+    slug VARCHAR(255) UNIQUE,
+    title VARCHAR(500),
+    poster_url TEXT,
+    poster_cdn_url TEXT,
+    storage_status JSONB,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE episodes (
+    id SERIAL PRIMARY KEY,
+    movie_id INTEGER REFERENCES movies(id),
+    episode_number INTEGER,
+    video_sources JSONB,  -- Store multiple sources
+    storage_info JSONB
+);
+
+-- Performance indexes
+CREATE INDEX idx_movies_slug ON movies(slug);
+CREATE INDEX idx_movies_title_gin ON movies USING gin(to_tsvector('english', title));
+CREATE INDEX idx_episodes_movie ON episodes(movie_id, episode_number);
+```
+
+---
+
+### **🔧 Storage Solutions Comparison**
+
+#### **1. AWS S3 + CloudFront (Production Recommended)**
+```javascript
+// Rophim Production Setup
+const storageConfig = {
+  // Image storage
+  images: {
+    bucket: "rophim-images",
+    regions: ["us-east-1", "ap-southeast-1"], // Multi-region
+    cdn: "https://cdn.rophim.com",
+    
+    upload_pipeline: {
+      original: "s3://rophim-images/posters/original/",
+      optimized: "s3://rophim-images/posters/optimized/",
+      thumbnails: "s3://rophim-images/posters/thumbs/"
+    },
+    
+    cost_optimization: {
+      lifecycle_rules: {
+        "transition_to_ia": "30_days",  // Infrequent Access
+        "transition_to_glacier": "90_days",
+        "delete_after": "2_years"
+      }
+    }
+  },
+  
+  // Video handling
+  videos: {
+    strategy: "external_links",  // Cost-effective for movie sites
+    backup_storage: "s3://rophim-video-backup/",
+    streaming_cdn: "https://stream.rophim.com"
+  }
+}
+```
+
+**💰 Cost Analysis (10,000 movies):**
+- **Images**: ~$50/month (S3) + $20/month (CloudFront)
+- **Video Storage**: $0 (external links) or $2000+/month (self-hosted)
+- **Database**: $25/month (MongoDB Atlas M10)
+- **Total**: ~$95/month
+
+#### **2. Cloudflare R2 (Cost-Effective Alternative)**
+```yaml
+# 60% cheaper than S3 for storage
+cloudflare_r2:
+  storage_cost: "$0.015/GB/month"  # vs S3's $0.023
+  egress_cost: "$0.00/GB"          # vs S3's $0.09/GB
+  
+  perfect_for:
+    - High traffic sites
+    - Global content delivery
+    - Cost optimization
+    
+  rophim_savings: "$500/month"  # At 100TB storage
+```
+
+#### **3. Local Storage + CDN (Budget Setup)**
+```bash
+# For development/small scale
+local_setup:
+  storage: "/var/www/rophim/storage/"
+  structure:
+    - "posters/"
+    - "thumbnails/"
+    - "subtitles/"
+    - "backup/"
+  
+  cdn_integration:
+    - bunnycdn: "$0.01/GB"  # Cheapest CDN
+    - keycdn: "$0.04/GB"
+    - cloudflare: "Free tier available"
+```
+
+---
+
+### **🚀 Media Processing Pipeline**
+
+#### **Image Optimization Workflow**
+```javascript
+// Automated image processing for rophim
+const imageProcessing = {
+  input: "original_scraped_image.jpg",
+  
+  processing_steps: [
+    {
+      step: "download_original",
+      source: "https://original-site.com/poster.jpg",
+      storage: "s3://rophim-temp/original/"
+    },
+    {
+      step: "optimize_formats",
+      outputs: [
+        {format: "webp", quality: 85, size: "1200x1800"},
+        {format: "jpg", quality: 90, size: "1200x1800"},
+        {format: "webp", quality: 80, size: "600x900"},
+        {format: "jpg", quality: 85, size: "600x900"},
+        {format: "webp", quality: 75, size: "300x450"}
+      ]
+    },
+    {
+      step: "upload_to_cdn",
+      destination: "https://cdn.rophim.com/posters/",
+      cache_control: "max-age=31536000"  // 1 year
+    },
+    {
+      step: "update_database",
+      fields: ["poster_cdn_url", "storage_status", "optimized_sizes"]
+    }
+  ]
+}
+```
+
+#### **Video Source Management**
+```javascript
+// Rophim video handling strategy
+const videoManagement = {
+  strategy: "multi_source_aggregation",
+  
+  sources: [
+    {
+      type: "direct_links",
+      reliability: 0.75,
+      cost: "$0",
+      bandwidth: "external"
+    },
+    {
+      type: "backup_storage", 
+      reliability: 0.99,
+      cost: "$2000/month",
+      bandwidth: "own_cdn"
+    }
+  ],
+  
+  fallback_chain: [
+    "primary_external_source",
+    "secondary_external_source", 
+    "backup_s3_storage",
+    "show_download_links"
+  ],
+  
+  quality_management: {
+    auto_detect: true,
+    available_qualities: ["480p", "720p", "1080p"],
+    adaptive_streaming: "hls_support"
+  }
+}
+```
+
+---
+
+### **💾 Backup & Disaster Recovery**
+
+#### **Rophim Backup Strategy**
+```yaml
+backup_strategy:
+  database:
+    frequency: "daily"
+    retention: "30_days"
+    storage: "s3://rophim-backups/db/"
+    encryption: true
+    
+  media_files:
+    critical_images: 
+      frequency: "weekly"
+      storage: "glacier"
+    user_uploads:
+      frequency: "daily" 
+      storage: "s3_ia"
+      
+  disaster_recovery:
+    rto: "4_hours"     # Recovery Time Objective
+    rpo: "1_hour"      # Recovery Point Objective
+    backup_regions: ["us-east-1", "eu-west-1"]
+```
+
+---
+
+### **📈 Scaling Considerations**
+
+#### **Growth Planning for Movie Sites**
+```yaml
+scaling_milestones:
+  
+  startup_phase:  # 0-1K movies
+    database: "MongoDB Atlas M0 (Free)"
+    storage: "Local + Free Cloudflare" 
+    cost: "$0-20/month"
+    
+  growth_phase:  # 1K-10K movies  
+    database: "MongoDB Atlas M10"
+    storage: "Cloudflare R2 + CDN"
+    cost: "$50-200/month"
+    
+  scale_phase:   # 10K-100K movies
+    database: "MongoDB Atlas M30 + Read Replicas"
+    storage: "Multi-region S3 + CloudFront"
+    cost: "$500-2000/month"
+    
+  enterprise:    # 100K+ movies
+    database: "MongoDB Sharded Cluster"
+    storage: "Multi-CDN + Edge Computing"
+         cost: "$2000+/month"
+```
+
+---
+
+### **🔧 Environment Variables Template**
+
+#### **Complete .env Template for Rophim-style Projects**
+```bash
+# .env - Rophim Infrastructure Configuration
+
+# ====== DATABASE CONFIGURATION ======
+# MongoDB (Primary Database)
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/rophim
+MONGODB_DB_NAME=rophim
+MONGODB_CONNECTION_TIMEOUT=30000
+
+# Redis (Caching)
+REDIS_URL=redis://localhost:6379
+REDIS_PASSWORD=your_redis_password
+REDIS_TTL_DEFAULT=3600
+
+# ====== STORAGE CONFIGURATION ======
+# AWS S3 / Cloudflare R2
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=us-east-1
+AWS_S3_BUCKET=rophim-storage
+
+# CDN Configuration
+CDN_BASE_URL=https://cdn.rophim.com
+CDN_IMAGE_PATH=/images/
+CDN_VIDEO_PATH=/videos/
+
+# ====== IMAGE PROCESSING ======
+IMAGE_OPTIMIZATION_ENABLED=true
+IMAGE_FORMATS=webp,jpg,png
+IMAGE_SIZES=300,600,1200
+IMAGE_QUALITY=85
+IMAGE_COMPRESSION=true
+
+# ====== VIDEO CONFIGURATION ======
+VIDEO_STORAGE_STRATEGY=external_links  # or s3, local
+VIDEO_QUALITIES=480p,720p,1080p,4K
+VIDEO_STREAMING_FORMAT=hls  # or dash, mp4
+VIDEO_BACKUP_ENABLED=true
+
+# ====== SCRAPING CONFIGURATION ======
+SCRAPING_RATE_LIMIT=100  # requests per minute
+SCRAPING_RETRY_ATTEMPTS=3
+SCRAPING_TIMEOUT=30000
+USER_AGENT="Mozilla/5.0 (compatible; RophimBot/1.0)"
+
+# ====== MULTI-SOURCE SETTINGS ======
+PRIMARY_SOURCE=rophim.me
+SECONDARY_SOURCES=phimmoi.sale,imdb.com
+CONFLICT_RESOLUTION_AUTO=true
+DATA_CONSISTENCY_THRESHOLD=0.85
+
+# ====== PERFORMANCE & MONITORING ======
+CACHE_DURATION_MOVIES=86400  # 24 hours
+CACHE_DURATION_EPISODES=43200  # 12 hours
+CACHE_DURATION_SEARCH=3600  # 1 hour
+
+# Monitoring
+PERFORMANCE_MONITORING=true
+DATABASE_SLOW_QUERY_THRESHOLD=1000  # ms
+STORAGE_COST_ALERTS=true
+UPTIME_MONITORING_URL=https://status.rophim.com
+
+# ====== DEPLOYMENT CONFIGURATION ======
+NODE_ENV=production
+PORT=3000
+API_BASE_URL=https://api.rophim.com
+FRONTEND_URL=https://rophim.com
+
+# Security
+JWT_SECRET=your_super_secret_jwt_key
+ENCRYPTION_KEY=your_encryption_key_32_chars
+CORS_ORIGINS=https://rophim.com,https://www.rophim.com
+
+# ====== BACKUP CONFIGURATION ======
+BACKUP_ENABLED=true
+BACKUP_SCHEDULE=0 2 * * *  # Daily at 2 AM
+BACKUP_RETENTION_DAYS=30
+BACKUP_S3_BUCKET=rophim-backups
+
+# ====== COST OPTIMIZATION ======
+STORAGE_LIFECYCLE_ENABLED=true
+STORAGE_TRANSITION_TO_IA_DAYS=30
+STORAGE_TRANSITION_TO_GLACIER_DAYS=90
+STORAGE_DELETE_AFTER_DAYS=730  # 2 years
+```
+
+---
+
+### **📊 Infrastructure Monitoring & Optimization**
+
+#### **Performance Monitoring Setup**
+```javascript
+// Rophim Monitoring Dashboard
+const monitoringConfig = {
+  database: {
+    mongodb: {
+      slow_queries: {
+        threshold: "1000ms",
+        alert_channels: ["slack", "email"],
+        auto_optimization: true
+      },
+      
+      connection_pool: {
+        max_connections: 100,
+        min_connections: 5,
+        monitoring: true
+      },
+      
+      indexes: {
+        auto_analysis: true,
+        suggestion_alerts: true,
+        performance_impact: "measure"
+      }
+    }
+  },
+  
+  storage: {
+    cost_monitoring: {
+      monthly_budget_alert: "$200",
+      usage_trend_analysis: true,
+      optimization_suggestions: true
+    },
+    
+    cdn_performance: {
+      cache_hit_ratio: ">90%",
+      global_latency: "<200ms",
+      bandwidth_monitoring: true
+    }
+  },
+  
+  application: {
+    response_times: {
+      api_endpoints: "<500ms",
+      page_loads: "<2s",
+      image_delivery: "<100ms"
+    },
+    
+    error_tracking: {
+      error_rate: "<0.1%",
+      real_time_alerts: true,
+      auto_recovery: "basic_issues"
+    }
+  }
+}
+```
+
+#### **Cost Optimization Automation**
+```yaml
+cost_optimization:
+  storage_policies:
+    images:
+      - action: "convert_to_webp"
+        savings: "30-50%"
+        quality_loss: "minimal"
+        
+      - action: "progressive_jpeg"
+        savings: "10-20%"
+        quality_loss: "none"
+        
+      - action: "lazy_loading"
+        bandwidth_savings: "40-60%"
+        user_experience: "improved"
+        
+    database:
+      - action: "query_optimization"
+        performance_gain: "50-80%"
+        cost_reduction: "index_efficiency"
+        
+      - action: "data_archiving"
+        storage_savings: "20-40%"
+        access_pattern: "cold_data"
+        
+    cdn:
+      - action: "smart_caching"
+        cost_reduction: "30-50%"
+        cache_hit_ratio: "improved"
+        
+      - action: "image_compression"
+        bandwidth_savings: "60-70%"
+        delivery_speed: "faster"
+```
+
+---
+
+### **🚨 Production Checklist for Movie Sites**
+
+#### **Pre-Launch Infrastructure Validation**
+```yaml
+infrastructure_checklist:
+  
+  database_ready:
+    - [ ] MongoDB cluster configured with replicas
+    - [ ] All indexes created and optimized
+    - [ ] Backup strategy implemented and tested
+    - [ ] Connection pooling configured
+    - [ ] Performance monitoring active
+    
+  storage_ready:
+    - [ ] S3/R2 buckets created with proper permissions
+    - [ ] CDN configured with global distribution
+    - [ ] Image processing pipeline tested
+    - [ ] Video source validation working
+    - [ ] Backup and recovery procedures tested
+    
+  performance_optimized:
+    - [ ] Redis caching implemented
+    - [ ] Database queries optimized (< 100ms avg)
+    - [ ] Images optimized (WebP, progressive JPEG)
+    - [ ] CDN cache hit ratio > 90%
+    - [ ] Page load times < 2 seconds
+    
+  monitoring_active:
+    - [ ] Database performance monitoring
+    - [ ] Storage cost tracking
+    - [ ] Error tracking and alerting
+    - [ ] Uptime monitoring
+    - [ ] Security monitoring
+    
+  scalability_prepared:
+    - [ ] Auto-scaling configured
+    - [ ] Load testing completed
+    - [ ] Disaster recovery plan tested
+    - [ ] Multi-region deployment ready
+    - [ ] Cost optimization automated
+```
 
 ---
 
@@ -371,22 +940,47 @@ git push origin feature/amazing-feature
 
 ### **Progressive Movie Site Development:**
 ```bash
-# Phase 1: Single Source MVP
+# Phase 1: Single Source MVP (2-4 weeks)
 npx cursor-rules-agent install
 npx cursor-rules-agent init --type="website-clone"
 
-# In Cursor IDE - Start simple
+# Setup infrastructure
+# In Cursor IDE:
+"setup database and storage for rophim clone"
+# → Configures MongoDB + S3/R2 storage
+# → Sets up image processing pipeline
+# → Creates environment variables template
+
 "clone website rophim.me"
 # → Target Analysis Mode
 # → Complete single-source clone
-# → Production ready in 2-4 weeks
+# → Production ready infrastructure
 
-# Phase 2: Multi-Source Enhancement (when ready)
+# Phase 2: Multi-Source Enhancement (4-6 weeks)
 "analyze all sources for data consistency" 
 # → Multi-Source Analysis Mode
 # → Discovers phimmoi.sale, IMDB, etc.
 # → Designs conflict resolution
 # → Enhanced site with 96% data accuracy
+```
+
+### **Infrastructure Setup Commands:**
+```bash
+# Database setup
+"setup mongodb for movie data with proper indexes"
+"configure redis caching for performance"
+
+# Storage configuration  
+"setup s3 buckets for images and video metadata"
+"configure cloudflare cdn for global delivery"
+
+# Media processing
+"setup image optimization pipeline with webp support"
+"configure video source validation and backup"
+
+# Monitoring
+"setup database performance monitoring"
+"configure storage cost optimization"
 ```
 
 ### **Aggregate E-commerce Data:**
