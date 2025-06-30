@@ -1,49 +1,27 @@
 {
-  "name": "cursor-rules-agent-installer",
-  "version": "0.1.0",
-  "description": "NPX installer for Cursor Rules Agent - AI-Driven Development Workflow System",
-  "main": "bin/install.js",
-  "bin": {
-    "cursor-rules-agent-installer": "bin/install.js"
-  },
+  "name": "cursor-rules-agent-minimal",
+  "version": "2.0.0",
+  "description": "Minimal Cursor IDE workflow rules integration with auto-mapping and multi-source capabilities",
+  "main": "scripts/convert-to-cursor-rules.sh",
   "scripts": {
-    "test": "node scripts/simple-test.js",
-    "test-private": "node scripts/test-private-install.js",
-    "test-existing": "node scripts/test-existing-setup.js",
-    "validate-rules": "node scripts/validate-rule-types.js",
-    "demo-rule-types": "node scripts/demo-rule-types.js",
-    "convert-to-cursor-rules": "./scripts/convert-to-cursor-rules.sh",
-    "validate-cursor-rules": "node scripts/validate-cursor-rules.js",
-    "deploy-cursor-rules": "./scripts/deploy-cursor-rules.sh",
-    "setup-project": "./scripts/setup-project.sh",
-    "backup-rules": "cp -r src/ backup/workflow-rules-backup-$(date +%Y%m%d-%H%M%S)/",
-    "test-cursor-integration": "node scripts/test-cursor-integration.js",
-    "publish": "node scripts/publish.js",
-    "install-local": "node bin/install.js",
-    "install-private": "GITHUB_TOKEN=$GITHUB_TOKEN node bin/install.js",
-    "prepack": "echo \"Preparing package for publication...\"",
-    "postpack": "echo \"Package ready for publication\""
+    "convert": "./scripts/convert-to-cursor-rules.sh",
+    "validate": "node scripts/validate-cursor-rules.js",
+    "deploy": "./scripts/convert-to-cursor-rules.sh",
+    "setup": "./scripts/convert-to-cursor-rules.sh",
+    "install": "npm install && chmod +x scripts/*.sh"
   },
   "keywords": [
     "cursor",
-    "ai",
-    "rules",
-    "agent",
+    "cursor-ide", 
     "workflow",
-    "development",
+    "rules",
     "automation",
-    "npx",
-    "github-token",
-    "private-repository"
+    "multi-source",
+    "website-cloning"
   ],
-  "author": "Cursor Rules Agent Team",
+  "author": "Enhanced Multi-Source Workflow Team",
   "license": "MIT",
   "dependencies": {
-    "fs-extra": "^11.2.0",
-    "chalk": "^4.1.2",
-    "inquirer": "^8.2.6",
-    "ora": "^5.4.1",
-    "axios": "^1.6.0",
     "js-yaml": "^4.1.0"
   },
   "repository": {
@@ -51,12 +29,6 @@
     "url": "https://github.com/vietnguyen91/cursor-rules.git"
   },
   "engines": {
-    "node": ">=14.0.0"
-  },
-  "preferGlobal": false,
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
+    "node": ">=16.0.0"
   }
-} 
+}
