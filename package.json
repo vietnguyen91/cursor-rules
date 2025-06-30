@@ -12,6 +12,12 @@
     "test-existing": "node scripts/test-existing-setup.js",
     "validate-rules": "node scripts/validate-rule-types.js",
     "demo-rule-types": "node scripts/demo-rule-types.js",
+    "convert-to-cursor-rules": "./scripts/convert-to-cursor-rules.sh",
+    "validate-cursor-rules": "node scripts/validate-cursor-rules.js",
+    "deploy-cursor-rules": "./scripts/deploy-cursor-rules.sh",
+    "setup-project": "./scripts/setup-project.sh",
+    "backup-rules": "cp -r src/ backup/workflow-rules-backup-$(date +%Y%m%d-%H%M%S)/",
+    "test-cursor-integration": "node scripts/test-cursor-integration.js",
     "publish": "node scripts/publish.js",
     "install-local": "node bin/install.js",
     "install-private": "GITHUB_TOKEN=$GITHUB_TOKEN node bin/install.js",
@@ -37,7 +43,8 @@
     "chalk": "^4.1.2",
     "inquirer": "^8.2.6",
     "ora": "^5.4.1",
-    "axios": "^1.6.0"
+    "axios": "^1.6.0",
+    "js-yaml": "^4.1.0"
   },
   "repository": {
     "type": "git",
@@ -49,5 +56,7 @@
   "preferGlobal": false,
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
   }
 } 

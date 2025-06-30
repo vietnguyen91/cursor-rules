@@ -1,0 +1,32 @@
+# Workflow backup files
+backup/
+**/workflow-rules-backup/
+
+# Large data files
+data/
+scraped/
+content/large/
+
+# Generated files
+dist/
+build/
+*.generated.*
+
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+
+# Development files
+.env
+.env.local
+.vscode/settings.json
+
+# Documentation archives
+docs/archive/
+legacy/

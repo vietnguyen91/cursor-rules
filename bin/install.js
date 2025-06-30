@@ -25,7 +25,7 @@ if (process.env.GITHUB_TOKEN) {
   githubAuth.headers = {
     'Authorization': `token ${process.env.GITHUB_TOKEN}`,
     'User-Agent': 'Cursor-Rules-Agent-Installer'
-  };
+};
 }
 
 const githubApi = axios.create({
@@ -681,12 +681,12 @@ class CursorRulesInstaller {
     // Install embedded rules as fallback for failed downloads
     for (const [filename, content] of Object.entries(rulesData.core)) {
       if (failedFiles.some(f => f.filename === filename)) {
-        await fs.writeFile(
-          path.join(this.rulesDir, 'core', filename),
-          content.trim()
-        );
+      await fs.writeFile(
+        path.join(this.rulesDir, 'core', filename),
+        content.trim()
+      );
         console.log(chalk.gray(`   ✓ Installed embedded: ${filename}`));
-      }
+    }
     }
   }
 
@@ -835,9 +835,9 @@ API_BASE_URL=http://localhost:3000
       console.log(chalk.gray('• ') + chalk.cyan('clone website https://example.com'));
       console.log(chalk.gray('• ') + chalk.cyan('analyze all sources for data consistency'));
     } else {
-      console.log(chalk.gray('• ') + chalk.cyan('brainstorm ideas for [feature]'));
-      console.log(chalk.gray('• ') + chalk.cyan('plan feature: [name]'));
-      console.log(chalk.gray('• ') + chalk.cyan('work on TASK_001'));
+    console.log(chalk.gray('• ') + chalk.cyan('brainstorm ideas for [feature]'));
+    console.log(chalk.gray('• ') + chalk.cyan('plan feature: [name]'));
+    console.log(chalk.gray('• ') + chalk.cyan('work on TASK_001'));
     }
     console.log(chalk.gray('• ') + chalk.cyan('update documentation'));
     
