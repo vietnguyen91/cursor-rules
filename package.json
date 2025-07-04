@@ -9,7 +9,7 @@
     "LICENSE",
     "README.md"
   ],
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Minimal Cursor IDE workflow rules integration with auto-mapping and multi-source capabilities",
   "main": "scripts/convert-to-cursor-rules.sh",
   "scripts": {
@@ -21,7 +21,7 @@
   },
   "keywords": [
     "cursor",
-    "cursor-ide", 
+    "cursor-ide",
     "workflow",
     "rules",
     "automation",
