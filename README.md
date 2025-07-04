@@ -41,36 +41,7 @@
 curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
 
 # NPX alternative
-npx cursor-rules-agent-installer
-```
-
-### **🔐 Private Repository Installation**
-
-**Step 1:** Create GitHub token at [github.com/settings/tokens](https://github.com/settings/tokens) with `repo` scope
-
-**Step 2:** Install with authentication:
-```bash
-# Method A: Environment variable (recommended)
-export GITHUB_TOKEN=your_github_token_here
-curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
-
-# Method B: .env file
-echo "GITHUB_TOKEN=your_github_token_here" > .env
-curl -fsSL https://raw.githubusercontent.com/vietnguyen91/cursor-rules/main/scripts/install.sh | bash
-
-# Method C: NPX with token
-export GITHUB_TOKEN=your_github_token_here
-npx cursor-rules-agent-installer
-```
-
-### **🛠 Manual Setup**
-```bash
-# Clone with token authentication
-git clone https://your_token@github.com/vietnguyen91/cursor-rules.git
-cd cursor-rules/cursor-rules-agent
-
-# Install with token
-GITHUB_TOKEN=your_token npm run install-local
+npx cursor-rules-agent install
 ```
 
 ### **🔄 Existing Project Integration**
