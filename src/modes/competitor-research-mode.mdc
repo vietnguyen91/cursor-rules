@@ -1,0 +1,108 @@
+# 🏁 Competitor Research Mode
+
+```yaml
+# Rule Metadata
+rule_type: MODE_COMPETITOR_RESEARCH
+priority: 2
+scope: ["seo", "competitor-research", "growth", "ux-retention"]
+requires: []
+conflicts: []
+activation_conditions:
+  - mode: "Competitor_Research"
+  - manual_request: ["research đối thủ", "competitor research", "seo research", "đối thủ", "phimmoi"]
+  - keywords_present: ["traffic", "user", "giữ user", "SEO", "ranking", "backlink", "SERP"]
+description: "Ràng buộc quy trình research đối thủ: thu hút traffic, tối ưu SEO, tối ưu UX & retention, và đo lường."
+version: "2.0.0"
+```
+
+## 🎯 Mục tiêu
+- Tổng hợp chiến lược đối thủ: SEO, nội dung, kỹ thuật, UX/retention, social, monetization.
+- Sinh báo cáo hành động + backlog cải tiến; liên kết automation để đo lường khách quan.
+
+## 🌍 Phạm vi theo Topic & Quốc gia
+- Tham số:
+  - topic: ví dụ "Hàn Quốc", "Kinh Dị", "Anime"...
+  - country: mã ISO-3166 (ví dụ: "VN", "US"...)
+  - locale: BCP47 (ví dụ: "vi-VN", "en-US"...)
+
+## 🧰 MCP/Automation tích hợp
+- Web Search: tìm chiến lược SEO/UX của đối thủ.
+- Playwright: kiểm tra cấu trúc, tốc độ, hành vi trang (nếu dùng).
+- Sequential Thinking: thiết kế checklist nhất quán.
+- Tích hợp automation nội bộ:
+  - `cd rophim-healthcheck && npm run automation:competitor`
+  - `cd rophim-healthcheck && npm run automation:ranking`
+
+## 📋 Quy trình
+1) SERP & Traffic Acquisition
+- Phân tích SERP: từ khóa chính/phụ ("phim moi", biến thể), featured snippets, FAQ, video.
+- CTA meta: tiêu đề/description, CTR dự kiến, rich results (schema).
+- Kênh traffic: SEO, direct/brand, referral, social.
+
+2) On-page/Technical SEO
+- Meta/canonical/robots/sitemap; Core Web Vitals; i18n/hreflang; pagination, facets.
+- Schema (Movie/VideoObject/Breadcrumb/WebSite SearchAction).
+- Cấu trúc URL, internal linking, topic clusters, tag/category.
+
+3) Content Strategy & Gaps
+- Loại nội dung: review, tóm tắt, trending, bộ sưu tập theo mùa.
+- Tính độc nhất (chống duplicate), tốc độ cập nhật, cover độ sâu (metadata, episode…).
+
+4) Authority & Backlinks
+- Loại backlink: editorial, directories, social embeds, partnerships.
+- Anchor diversity, page authority/brand mentions.
+
+5) UX & Retention
+- Hook giữ user: Recently watched, Watchlist, đề xuất thông minh, tải nhanh, ít friction.
+- Session quality: time-on-page, return rate, click depth, bounce.
+- A/B ưu tiên: tiêu đề, bố cục card, đề xuất, tốc độ player, onboarding.
+
+6) Branding & Social Proof
+- Nhất quán thương hiệu, favicon/logo, OG cards; kênh social, UGC, signals.
+
+7) Monetization/Ads (nếu có)
+- Ảnh hưởng đến SEO/UX; tốc độ; giới hạn số ad, lazy-load.
+
+8) SERP nội địa (bổ sung)
+- Phân tích theo `locale/country`, xem rich results, intent địa phương, social signals nội địa.
+
+9) Content & Gaps theo topic (bổ sung)
+- Tập trung vào chuyên mục `topic` (ví dụ: "phim Hàn Quốc"), đối chiếu tần suất cập nhật và độ sâu nội dung.
+
+10) Backlink & Mention nội địa (bổ sung)
+- Nguồn báo, forum, cộng đồng trong nước.
+
+11) UX & Retention bản địa hóa (bổ sung)
+- Ngôn ngữ, lịch cập nhật giờ địa phương, card layout phù hợp thói quen người dùng.
+
+12) Đo lường (bổ sung)
+- Chạy automation với biến `RESEARCH_TOPIC`, `RESEARCH_COUNTRY`, `RESEARCH_LOCALE`.
+
+## 🔗 Tài liệu nội bộ cần tham chiếu
+- `PHIMMOI_COMPETITOR_SEO_STRATEGY.md`
+- `PHIMMOIONLINE_BRANDING_STRATEGY.md`
+- `GOOGLE_SEARCH_CONSOLE_SETUP.md`
+- `DEPLOYMENT_UPDATE_PHIMMOIONLINE.md` (mục Competitor/Monitoring)
+- `AUTOMATION_SCRIPTS.md` (đường dẫn và lệnh mới)
+
+## 📦 Đầu ra bắt buộc
+- `docs/research/competitor/{date}-competitor-report.md` (dùng template bên dưới).
+- Backlog cải tiến ngắn hạn (top 5) kèm ước lượng tác động và effort.
+- Danh sách từ khóa ưu tiên + SERP intent + content mapping.
+- Kế hoạch theo dõi (GSC + automation ranking) với KPI tuần/tháng.
+
+## ✅ Quality gates
+- Có chạy `automation:competitor` và `automation:ranking` ít nhất 1 lần, đính kèm file báo cáo.
+- Đề xuất không trùng lặp với "duplicate content" và theo đúng chiến lược uniqueness.
+- KPI đo được: CTR, vị trí trung bình, số trang hợp lệ, CWV, session length/return users.
+
+## ▶️ Lệnh nhanh
+```bash
+cd rophim-healthcheck
+npm run automation:competitor
+npm run automation:ranking
+```
+description:
+globs:
+alwaysApply: false
+---
